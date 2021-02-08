@@ -225,6 +225,11 @@ you like, and that you have no need for Gitea, a self-hosted, low-resource,
 cluster-local, github alternative. If you /do/ want that, follow the more in
 depth [[https://github.com/EnigmaCurry/literate-k3s/blob/master/clusters/k3s.example.com/k3s.example.com.org][k3s.example.com]] guide.
 ** Flux Config
+*** FLUX_VERSION
+Choose the [[https://github.com/fluxcd/flux2/releases][Flux2 release version]] :
+#+begin_src config :noweb yes :eval no
+v0.7.7
+#+end_src
 *** FLUX_REPO_NAME
 The name of the repository containing these org files, and from which flux
 reads. Not including the domain, just the name.
