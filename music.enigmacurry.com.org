@@ -296,16 +296,6 @@ The [[https://github.com/bitnami/charts/blob/master/bitnami/postgresql/Chart.yam
       --export > <<SRC_DIR>>/funkwhale/postgresql.release.yaml
     #+end_src
 
-*** TODO Create Secrets
-#+begin_src shell :noweb yes :eval never-export :exports code
-export KUBECONFIG=<<KUBE_CONFIG>>
-kubectl create secret generic funkwhale \
-   --namespace funkwhale --dry-run=client -o json \
-   --from-literal=POSTGRES_USER=funkwhale \
-   --from-literal=POSTGRES_PASSWORD=$(openssl rand --base64 24) \
-  | kubeseal -o yaml > <<SRC_DIR>>/funkwhale/sealed-secret.yaml
-#+end_src
-
 *** Commit and push manifests to git repository
     #+begin_src shell :noweb yes :eval never-export :exports code
     git -C <<SRC_DIR>> add funkwhale
@@ -318,11 +308,10 @@ kubectl create secret generic funkwhale \
     
     Now flux will apply the manifests for you..
 *** Check services:
+    Wait a bit for Flux to deploy, then check the status of services:
     #+begin_src shell :noweb yes :eval never-export :exports code
     <<kubectl>> -n funkwhale get all
     #+end_src
-
-    #+RESULTS:
 
 *** funkwhale/kustomization.yaml
   #+begin_src yaml :noweb yes :eval no :tangle funkwhale/kustomization.yaml
