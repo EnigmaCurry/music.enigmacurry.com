@@ -211,10 +211,12 @@ Choose the [[https://github.com/bitnami-labs/sealed-secrets/releases][release ve
 v0.14.1
 #+end_src
 ** Traefik Deployment
-Follow the deployment instructions in the Traefik library module (Note that the
-variable =<<SRC_DIR>>= points back to the directory containing /this current/
-file, so files created from =traefik.org= will create file here in this
-directory.):
+#+BEGIN_COMMENT
+Run the shell code blocks outlined in the Traefik library module. Open up the file
+from the INCLUDE directive below. Run the code blocks there, variables like
+=<<SRC_DIR>>= refer back to this current file's directory, /not/ the location of
+the INCLUDE.
+#+END_COMMENT
 #+INCLUDE: "~/git/vendor/enigmacurry/literate-k3s/lib/traefik.org"
 ** Sealed Secrets Deployment
 Follow the deployment instructions in the Sealed Secrets library module: 
@@ -246,7 +248,12 @@ page.
 ssh://git@github.com/EnigmaCurry/music.enigmacurry.com.git
 #+end_src
 ** Flux Deployment
-Follow the deployment instructions in the Flux library module:
+#+BEGIN_COMMENT
+Run the shell code blocks outlined in the Flux library module. Open up the file
+from the INCLUDE directive below. Run the code blocks there, variables like
+=<<SRC_DIR>>= refer back to this current file's directory, /not/ the location of
+the INCLUDE.
+#+END_COMMENT
 #+INCLUDE: "~/git/vendor/enigmacurry/literate-k3s/lib/flux.org"
 * LICENSE
 #+INCLUDE: "~/git/vendor/enigmacurry/literate-k3s/LICENSE.org"
