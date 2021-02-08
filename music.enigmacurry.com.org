@@ -300,6 +300,12 @@ kubectl create secret generic funkwhale \
     #+end_src
 
     #+RESULTS:
+    | NAME                                | READY     | STATUS                     | RESTARTS    | AGE      |       |
+    | pod/funkwhale-postgres-0            | 0/1       | CreateContainerConfigError | 0           | 3m38s    |       |
+    | NAME                                | TYPE      | CLUSTER-IP                 | EXTERNAL-IP | PORT(S)  | AGE   |
+    | service/funkwhale-postgres          | ClusterIP | 10.43.107.165              | <none>      | 5432/TCP | 3m39s |
+    | NAME                                | READY     | AGE                        |             |          |       |
+    | statefulset.apps/funkwhale-postgres | 0/1       | 3m39s                      |             |          |       |
 
 *** funkwhale/pvc.yaml
 #+begin_src yaml :noweb yes :eval no :tangle funkwhale/pvc.yaml
@@ -379,6 +385,7 @@ spec:
   resources:
   - namespace.yaml
   - pvc.yaml
+  - sealed-secret.yaml
   - database.yaml
   #+end_src
 *** funkwhale/namespace.yaml
