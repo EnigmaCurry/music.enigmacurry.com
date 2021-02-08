@@ -29,6 +29,7 @@ cluster:
 mkdir -p <<SRC_DIR>>
 mkdir -p <<SRC_DIR>>/kube-system/traefik
 mkdir -p <<SRC_DIR>>/flux-system/
+mkdir -p <<SRC_DIR>>/funkwhale/
 #+end_src
 
 Download this current org source file into your new directory:
@@ -208,9 +209,7 @@ evaluated the code in the =Emacs Local Variables=), that variable references
 like =<<SRC_DIR>>= refer back to /this current file's/ directory, /not/ in
 relation to where =traefik.org= exists. So that, when you run those shell code
 blocks, you will be creating new directories and files in /this current file's/
-directory. If you are ever unsure exactly what command is going to be run, you
-can usually add an =echo= in front of the line so that the command is parsed but
-not executed.
+directory.
 #+END_COMMENT
 #+INCLUDE: "~/git/vendor/enigmacurry/literate-k3s/lib/traefik.org"
 ** Sealed Secrets Deployment
@@ -266,6 +265,130 @@ ssh://git@<<FLUX_REPO_HOST_PORT>>/<<FLUX_REPO_ORG>>/<<FLUX_REPO_NAME>>.git
 Follow the deployment instructions in the Flux library INCLUDE:
 #+END_COMMENT
 #+INCLUDE: "~/git/vendor/enigmacurry/literate-k3s/lib/flux.org"
+* Funkwhale
+** Funkwhale Config
+*** FUNKWHALE_DOMAIN
+    #+name: FUNKWHALE_DOMAIN
+    #+begin_src config :noweb yes :eval no
+    <<CLUSTER>>
+    #+end_src
+** Funkwhale Deployment
+*** Create Secrets
+#+begin_src shell :noweb yes :eval never-export :exports code
+export KUBECONFIG=<<KUBE_CONFIG>>
+kubectl create secret generic funkwhale \
+   --namespace funkwhale --dry-run=client -o json \
+   --from-literal=POSTGRES_USER=funkwhale \
+   --from-literal=POSTGRES_PASSWORD=$(openssl rand --base64 24) \
+  | kubeseal -o yaml > <<SRC_DIR>>/funkwhale/sealed-secret.yaml
+#+end_src
+
+*** Commit and push manifests to git repository
+    #+begin_src shell :noweb yes :eval never-export :exports code
+    git -C <<SRC_DIR>> add funkwhale
+    git -C <<SRC_DIR>> commit -m "Funkwhale"
+    #+end_src
+
+    #+begin_src shell :noweb yes :eval never-export :exports code
+    git -C <<SRC_DIR>> push
+    #+end_src
+    
+    Now flux will apply the manifests for you..
+*** Check services:
+    #+begin_src shell :noweb yes :eval never-export :exports code
+    <<kubectl>> -n funkwhale get all
+    #+end_src
+
+    #+RESULTS:
+
+*** funkwhale/pvc.yaml
+#+begin_src yaml :noweb yes :eval no :tangle funkwhale/pvc.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: funkwhale-postgres-data
+  namespace: funkwhale
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: local-path
+---
+#+end_src
+*** funkwhale/database.yaml
+#+begin_src yaml :noweb yes :eval no :tangle funkwhale/database.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: funkwhale-postgres
+  namespace: funkwhale
+spec:
+  selector:
+    app: funkwhale-postgres
+  type: ClusterIP
+  ports:
+    - port: 5432
+      targetPort: 5432
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: funkwhale-postgres
+  namespace: funkwhale
+spec:
+  selector:
+    matchLabels:
+      app: funkwhale-postgres
+  serviceName: funkwhale-postgres
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: funkwhale-postgres
+    spec:
+      containers:
+        - name: funkwhale-postgres
+          image: postgres
+          volumeMounts:
+            - name: funkwhale-postgres-data
+              mountPath: /var/lib/postgresql/data
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: funkwhale
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: funkwhale
+                  key: POSTGRES_PASSWORD
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+      volumes:
+        - name: funkwhale-postgres-data
+          persistentVolumeClaim:
+            claimName: funkwhale-postgres-data
+#+end_src
+*** funkwhale/kustomization.yaml
+  #+begin_src yaml :noweb yes :eval no :tangle funkwhale/kustomization.yaml
+  apiVersion: kustomize.config.k8s.io/v1beta1
+  kind: Kustomization
+  resources:
+  - namespace.yaml
+  - pvc.yaml
+  - database.yaml
+  #+end_src
+*** funkwhale/namespace.yaml
+  #+begin_src yaml :noweb yes :eval no :tangle funkwhale/namespace.yaml
+  apiVersion: v1
+  kind: Namespace
+  metadata:
+    name: funkwhale
+  #+end_src
+
 * LICENSE
 #+INCLUDE: "~/git/vendor/enigmacurry/literate-k3s/LICENSE.org"
 * COMMENT Emacs Local Variables

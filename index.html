@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2021-02-08 Mon 12:22 -->
+<!-- 2021-02-08 Mon 14:23 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>music.enigmacurry.com</title>
@@ -390,7 +390,27 @@ for the JavaScript code in this tag.
 </li>
 </ul>
 </li>
-<li><a href="#LICENSE">6. LICENSE</a></li>
+<li><a href="#Funkwhale">6. Funkwhale</a>
+<ul>
+<li><a href="#Funkwhale%20Config">6.1. Funkwhale Config</a>
+<ul>
+<li><a href="#FUNKWHALE_DOMAIN">6.1.1. FUNKWHALE_DOMAIN</a></li>
+</ul>
+</li>
+<li><a href="#Funkwhale%20Deployment">6.2. Funkwhale Deployment</a>
+<ul>
+<li><a href="#Create%20Secrets">6.2.1. Create Secrets</a></li>
+<li><a href="#Commit%20and%20push%20manifests%20to%20git%20repository">6.2.2. Commit and push manifests to git repository</a></li>
+<li><a href="#Check%20services%3A">6.2.3. Check services:</a></li>
+<li><a href="#funkwhale%2Fpvc.yaml">6.2.4. funkwhale/pvc.yaml</a></li>
+<li><a href="#funkwhale%2Fdatabase.yaml">6.2.5. funkwhale/database.yaml</a></li>
+<li><a href="#funkwhale%2Fkustomization.yaml">6.2.6. funkwhale/kustomization.yaml</a></li>
+<li><a href="#funkwhale%2Fnamespace.yaml">6.2.7. funkwhale/namespace.yaml</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#LICENSE">7. LICENSE</a></li>
 </ul>
 </div>
 </div>
@@ -431,6 +451,7 @@ cluster:
 <pre class="src src-shell">mkdir -p /home/ryan/git/clusters/music.enigmacurry.com
 mkdir -p /home/ryan/git/clusters/music.enigmacurry.com/kube-system/traefik
 mkdir -p /home/ryan/git/clusters/music.enigmacurry.com/flux-system/
+mkdir -p /home/ryan/git/clusters/music.enigmacurry.com/funkwhale/
 </pre>
 </div>
 
@@ -494,7 +515,7 @@ This is the source URL for this document, used in the <a href="#Getting%20Starte
 above.
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="orge6489c3">https://raw.githubusercontent.com/EnigmaCurry/literate-k3s/master/clusters/music.enigmacurry.com/music.enigmacurry.com.org
+<pre class="src src-config" id="orga2a56ff">https://raw.githubusercontent.com/EnigmaCurry/literate-k3s/master/clusters/music.enigmacurry.com/music.enigmacurry.com.org
 </pre>
 </div>
 </div>
@@ -506,7 +527,7 @@ above.
 Set <code>CLUSTER</code> to be the domain name for your cluster:
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org72a5ce1">music.enigmacurry.com
+<pre class="src src-config" id="org0e5f63e">music.enigmacurry.com
 </pre>
 </div>
 </div>
@@ -519,7 +540,7 @@ Set <code>CLUSTER_SSH_USER</code> to be the admin SSH account of the cluster (us
 root).
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="orgc0b212e">root
+<pre class="src src-config" id="org1de5235">root
 </pre>
 </div>
 </div>
@@ -531,7 +552,7 @@ root).
 <code>KUBE_CONFIG</code> is the local path to the kubectl config file
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="orgd9a0c98">${HOME}/.kube/music.enigmacurry.com-config
+<pre class="src src-config" id="org23018d8">${HOME}/.kube/music.enigmacurry.com-config
 </pre>
 </div>
 </div>
@@ -545,7 +566,7 @@ Since you'll need to specify the kubectl config file each and every time you use
 code blocks.
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org29a28db">kubectl --kubeconfig=${HOME}/.kube/music.enigmacurry.com-config
+<pre class="src src-config" id="org08f9aac">kubectl --kubeconfig=${HOME}/.kube/music.enigmacurry.com-config
 </pre>
 </div>
 </div>
@@ -652,7 +673,7 @@ Edit the variables for the Traefik config:
 provider. 
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org67e212f">letsencrypt@enigmacurry.com
+<pre class="src src-config" id="org3792a66">letsencrypt@enigmacurry.com
 </pre>
 </div>
 </div>
@@ -668,7 +689,7 @@ valid certificates in web browsers).
 </p>
 
 <div class="org-src-container">
-<pre class="src src-config" id="org114fe93">https://acme-staging-v02.api.letsencrypt.org/directory
+<pre class="src src-config" id="org4b7b27c">https://acme-staging-v02.api.letsencrypt.org/directory
 </pre>
 </div>
 </div>
@@ -683,7 +704,7 @@ domain name to respond to. <code>TRAEFIK_WHOAMI_DOMAIN</code> is the subdomain t
 whoami service responds to.
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org6f29971">whoami.music.enigmacurry.com
+<pre class="src src-config" id="org40967c6">whoami.music.enigmacurry.com
 </pre>
 </div>
 </div>
@@ -695,7 +716,7 @@ whoami service responds to.
 The version number of Traefik to install (eg. <code>2.3</code>).
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org93e3e10">v2.3
+<pre class="src src-config" id="org38d7d9f">v2.3
 </pre>
 </div>
 </div>
@@ -707,7 +728,7 @@ The version number of Traefik to install (eg. <code>2.3</code>).
 <code>TRAEFIK_LOG_LEVEL</code> is the filter level on the traefik log.
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org8b463db">INFO
+<pre class="src src-config" id="orgd68e480">INFO
 </pre>
 </div>
 </div>
@@ -724,7 +745,7 @@ The version number of Traefik to install (eg. <code>2.3</code>).
 Choose the <a href="https://github.com/bitnami-labs/sealed-secrets/releases">release version for Sealed Secrets</a>
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org9911332">v0.14.1
+<pre class="src src-config" id="org5e9a4ce">v0.14.1
 </pre>
 </div>
 </div>
@@ -799,7 +820,7 @@ Test with TLS verification on:
 </div>
 
 <p>
-TLS will not verify until you use the production <a href="#org114fe93">TRAEFIK_ACME_SERVER</a>.
+TLS will not verify until you use the production <a href="#org4b7b27c">TRAEFIK_ACME_SERVER</a>.
 </p>
 </div>
 </div>
@@ -1137,7 +1158,7 @@ to direct traffic to any other node.
 <div class="outline-text-4" id="text-4-3-8">
 <p>
 <a href="https://github.com/traefik/whoami">traefik/whoami</a> can be deployed to test Traefik functionality. It listens to the
-domain <a href="#org6f29971">TRAEFIK_WHOAMI_DOMAIN</a> (eg. <code>whoami.k3s.example.com</code>).
+domain <a href="#org40967c6">TRAEFIK_WHOAMI_DOMAIN</a> (eg. <code>whoami.k3s.example.com</code>).
 </p>
 
 <div class="org-src-container">
@@ -1280,7 +1301,7 @@ The name of the git repository containing these org files, and from which flux
 reads. Usually it's the same as <code>CLUSTER</code>.
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org4c0d562">music.enigmacurry.com
+<pre class="src src-config" id="org9b54861">music.enigmacurry.com
 </pre>
 </div>
 </div>
@@ -1292,7 +1313,7 @@ reads. Usually it's the same as <code>CLUSTER</code>.
 The name of the owner of the git repository.
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org134241e">EnigmaCurry
+<pre class="src src-config" id="orgfeb95b0">EnigmaCurry
 </pre>
 </div>
 </div>
@@ -1304,7 +1325,7 @@ The name of the owner of the git repository.
 The Hostname and Port number of the git repository remote URL:
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org8ad6606">github.com:22
+<pre class="src src-config" id="org05f6167">github.com:22
 </pre>
 </div>
 </div>
@@ -1320,7 +1341,7 @@ organization name. (This might work with other URL forms, like HTTPS, but this
 is the only one that's been tested:)
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org0c94046">ssh://git@github.com:22/EnigmaCurry/music.enigmacurry.com.git
+<pre class="src src-config" id="org2474768">ssh://git@github.com:22/EnigmaCurry/music.enigmacurry.com.git
 </pre>
 </div>
 </div>
@@ -1387,7 +1408,7 @@ with its state.
 
 <p>
 If using Gitea, click the <code>+</code> icon in the upper right corner to create a <code>New
-Repository</code>. Call the new repository the same as <a href="#org4c0d562">FLUX_REPO_NAME</a>.
+Repository</code>. Call the new repository the same as <a href="#org9b54861">FLUX_REPO_NAME</a>.
 </p>
 
 <p>
@@ -1606,9 +1627,185 @@ And in another minute or so, the namespace should be gone:
 </div>
 </div>
 </div>
-<div id="outline-container-LICENSE" class="outline-2">
-<h2 id="LICENSE"><span class="section-number-2">6</span> LICENSE</h2>
+<div id="outline-container-Funkwhale" class="outline-2">
+<h2 id="Funkwhale"><span class="section-number-2">6</span> Funkwhale</h2>
 <div class="outline-text-2" id="text-6">
+</div>
+<div id="outline-container-Funkwhale%20Config" class="outline-3">
+<h3 id="Funkwhale%20Config"><span class="section-number-3">6.1</span> Funkwhale Config</h3>
+<div class="outline-text-3" id="text-6-1">
+</div>
+<div id="outline-container-FUNKWHALE_DOMAIN" class="outline-4">
+<h4 id="FUNKWHALE_DOMAIN"><span class="section-number-4">6.1.1</span> FUNKWHALE_DOMAIN</h4>
+<div class="outline-text-4" id="text-6-1-1">
+<div class="org-src-container">
+<pre class="src src-config" id="org1eca964">music.enigmacurry.com
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-Funkwhale%20Deployment" class="outline-3">
+<h3 id="Funkwhale%20Deployment"><span class="section-number-3">6.2</span> Funkwhale Deployment</h3>
+<div class="outline-text-3" id="text-6-2">
+</div>
+<div id="outline-container-Create%20Secrets" class="outline-4">
+<h4 id="Create%20Secrets"><span class="section-number-4">6.2.1</span> Create Secrets</h4>
+<div class="outline-text-4" id="text-6-2-1">
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #4f97d7;">export</span> <span style="color: #7590db;">KUBECONFIG</span>=$<span style="color: #4f97d7;">{</span><span style="color: #7590db;">HOME</span><span style="color: #4f97d7;">}</span>/.kube/music.enigmacurry.com-config
+kubectl create secret generic funkwhale <span style="color: #2d9574;">\</span>
+   --namespace funkwhale --dry-run=client -o json <span style="color: #2d9574;">\</span>
+   --from-literal=<span style="color: #7590db;">POSTGRES_USER</span>=funkwhale <span style="color: #2d9574;">\</span>
+   --from-literal=<span style="color: #7590db;">POSTGRES_PASSWORD</span>=$<span style="color: #4f97d7;">(</span><span style="color: #fa8072;">openssl</span> rand --base64 <span style="color: #a45bad;">24</span><span style="color: #4f97d7;">)</span> <span style="color: #2d9574;">\</span>
+  | kubeseal -o yaml &gt; /home/ryan/git/clusters/music.enigmacurry.com/funkwhale/sealed-secret.yaml
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-Commit%20and%20push%20manifests%20to%20git%20repository" class="outline-4">
+<h4 id="Commit%20and%20push%20manifests%20to%20git%20repository"><span class="section-number-4">6.2.2</span> Commit and push manifests to git repository</h4>
+<div class="outline-text-4" id="text-6-2-2">
+<div class="org-src-container">
+<pre class="src src-shell">git -C /home/ryan/git/clusters/music.enigmacurry.com add funkwhale
+git -C /home/ryan/git/clusters/music.enigmacurry.com commit -m <span style="color: #2d9574;">"Funkwhale"</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-shell">git -C /home/ryan/git/clusters/music.enigmacurry.com push
+</pre>
+</div>
+
+<p>
+Now flux will apply the manifests for you..
+</p>
+</div>
+</div>
+<div id="outline-container-Check%20services%3A" class="outline-4">
+<h4 id="Check%20services%3A"><span class="section-number-4">6.2.3</span> Check services:</h4>
+<div class="outline-text-4" id="text-6-2-3">
+<div class="org-src-container">
+<pre class="src src-shell">kubectl --kubeconfig=$<span style="color: #4f97d7;">{</span><span style="color: #7590db;">HOME</span><span style="color: #4f97d7;">}</span>/.kube/music.enigmacurry.com-config -n funkwhale get all
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-funkwhale%2Fpvc.yaml" class="outline-4">
+<h4 id="funkwhale%2Fpvc.yaml"><span class="section-number-4">6.2.4</span> funkwhale/pvc.yaml</h4>
+<div class="outline-text-4" id="text-6-2-4">
+<div class="org-src-container">
+<pre class="src src-yaml"><span style="color: #7590db;">apiVersion</span>: v1
+<span style="color: #7590db;">kind</span>: PersistentVolumeClaim
+<span style="color: #7590db;">metadata</span>:
+  <span style="color: #7590db;">name</span>: funkwhale-postgres-data
+  <span style="color: #7590db;">namespace</span>: funkwhale
+<span style="color: #7590db;">spec</span>:
+  <span style="color: #7590db;">accessModes</span>:
+  - ReadWriteOnce
+  <span style="color: #7590db;">resources</span>:
+    <span style="color: #7590db;">requests</span>:
+      <span style="color: #7590db;">storage</span>: 5Gi
+  <span style="color: #7590db;">storageClassName</span>: local-path
+<span style="color: #2aa1ae; background-color: #292e34;">---</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-funkwhale%2Fdatabase.yaml" class="outline-4">
+<h4 id="funkwhale%2Fdatabase.yaml"><span class="section-number-4">6.2.5</span> funkwhale/database.yaml</h4>
+<div class="outline-text-4" id="text-6-2-5">
+<div class="org-src-container">
+<pre class="src src-yaml"><span style="color: #7590db;">apiVersion</span>: v1
+<span style="color: #7590db;">kind</span>: Service
+<span style="color: #7590db;">metadata</span>:
+  <span style="color: #7590db;">name</span>: funkwhale-postgres
+  <span style="color: #7590db;">namespace</span>: funkwhale
+<span style="color: #7590db;">spec</span>:
+  <span style="color: #7590db;">selector</span>:
+    <span style="color: #7590db;">app</span>: funkwhale-postgres
+  <span style="color: #7590db;">type</span>: ClusterIP
+  <span style="color: #7590db;">ports</span>:
+    - <span style="color: #7590db;">port</span>: 5432
+      <span style="color: #7590db;">targetPort</span>: 5432
+<span style="color: #2aa1ae; background-color: #292e34;">---</span>
+<span style="color: #7590db;">apiVersion</span>: apps/v1
+<span style="color: #7590db;">kind</span>: StatefulSet
+<span style="color: #7590db;">metadata</span>:
+  <span style="color: #7590db;">name</span>: funkwhale-postgres
+  <span style="color: #7590db;">namespace</span>: funkwhale
+<span style="color: #7590db;">spec</span>:
+  <span style="color: #7590db;">selector</span>:
+    <span style="color: #7590db;">matchLabels</span>:
+      <span style="color: #7590db;">app</span>: funkwhale-postgres
+  <span style="color: #7590db;">serviceName</span>: funkwhale-postgres
+  <span style="color: #7590db;">replicas</span>: 1
+  <span style="color: #7590db;">template</span>:
+    <span style="color: #7590db;">metadata</span>:
+      <span style="color: #7590db;">labels</span>:
+        <span style="color: #7590db;">app</span>: funkwhale-postgres
+    <span style="color: #7590db;">spec</span>:
+      <span style="color: #7590db;">containers</span>:
+        - <span style="color: #7590db;">name</span>: funkwhale-postgres
+          <span style="color: #7590db;">image</span>: postgres
+          <span style="color: #7590db;">volumeMounts</span>:
+            - <span style="color: #7590db;">name</span>: funkwhale-postgres-data
+              <span style="color: #7590db;">mountPath</span>: /var/lib/postgresql/data
+          <span style="color: #7590db;">env</span>:
+            - <span style="color: #7590db;">name</span>: POSTGRES_USER
+              <span style="color: #7590db;">valueFrom</span>:
+                <span style="color: #7590db;">secretKeyRef</span>:
+                  <span style="color: #7590db;">name</span>: funkwhale
+                  <span style="color: #7590db;">key</span>: POSTGRES_USER
+            - <span style="color: #7590db;">name</span>: POSTGRES_PASSWORD
+              <span style="color: #7590db;">valueFrom</span>:
+                <span style="color: #7590db;">secretKeyRef</span>:
+                  <span style="color: #7590db;">name</span>: funkwhale
+                  <span style="color: #7590db;">key</span>: POSTGRES_PASSWORD
+            - <span style="color: #7590db;">name</span>: PGDATA
+              <span style="color: #7590db;">value</span>: /var/lib/postgresql/data/pgdata
+      <span style="color: #7590db;">volumes</span>:
+        - <span style="color: #7590db;">name</span>: funkwhale-postgres-data
+          <span style="color: #7590db;">persistentVolumeClaim</span>:
+            <span style="color: #7590db;">claimName</span>: funkwhale-postgres-data
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-funkwhale%2Fkustomization.yaml" class="outline-4">
+<h4 id="funkwhale%2Fkustomization.yaml"><span class="section-number-4">6.2.6</span> funkwhale/kustomization.yaml</h4>
+<div class="outline-text-4" id="text-6-2-6">
+<div class="org-src-container">
+<pre class="src src-yaml"><span style="color: #7590db;">apiVersion</span>: kustomize.config.k8s.io/v1beta1
+<span style="color: #7590db;">kind</span>: Kustomization
+<span style="color: #7590db;">resources</span>:
+- namespace.yaml
+- pvc.yaml
+- database.yaml
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-funkwhale%2Fnamespace.yaml" class="outline-4">
+<h4 id="funkwhale%2Fnamespace.yaml"><span class="section-number-4">6.2.7</span> funkwhale/namespace.yaml</h4>
+<div class="outline-text-4" id="text-6-2-7">
+<div class="org-src-container">
+<pre class="src src-yaml"><span style="color: #7590db;">apiVersion</span>: v1
+<span style="color: #7590db;">kind</span>: Namespace
+<span style="color: #7590db;">metadata</span>:
+  <span style="color: #7590db;">name</span>: funkwhale
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-LICENSE" class="outline-2">
+<h2 id="LICENSE"><span class="section-number-2">7</span> LICENSE</h2>
+<div class="outline-text-2" id="text-7">
 <p>
 Here is the license for <a href="https://github.com/EnigmaCurry/literate-k3s">enigmacurry/literate-k3s</a> and its accompanying libraries:
 </p>
@@ -1678,7 +1875,7 @@ well, so I instead opted to copy them here.
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: EnigmaCurry</p>
-<p class="date">Created: 2021-02-08 Mon 12:22</p>
+<p class="date">Created: 2021-02-08 Mon 14:23</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
