@@ -273,6 +273,13 @@ Follow the deployment instructions in the Flux library INCLUDE:
     <<CLUSTER>>
     #+end_src
 ** Funkwhale Deployment
+*** Add Helm chart repositories
+    #+begin_src shell :noweb yes :eval never-export :exports code
+    flux create source helm bitnami \
+    --url=https://charts.bitnami.com/bitnami \
+    --interval=12h --export > <<SRC_DIR>>/funkwhale/helm.sources.yaml
+    #+end_src
+
 *** Create Secrets
 #+begin_src shell :noweb yes :eval never-export :exports code
 export KUBECONFIG=<<KUBE_CONFIG>>
@@ -300,12 +307,12 @@ kubectl create secret generic funkwhale \
     #+end_src
 
     #+RESULTS:
-    | NAME                                | READY     | STATUS                     | RESTARTS    | AGE      |       |
-    | pod/funkwhale-postgres-0            | 0/1       | CreateContainerConfigError | 0           | 3m38s    |       |
-    | NAME                                | TYPE      | CLUSTER-IP                 | EXTERNAL-IP | PORT(S)  | AGE   |
-    | service/funkwhale-postgres          | ClusterIP | 10.43.107.165              | <none>      | 5432/TCP | 3m39s |
-    | NAME                                | READY     | AGE                        |             |          |       |
-    | statefulset.apps/funkwhale-postgres | 0/1       | 3m39s                      |             |          |       |
+    | NAME                                | READY     | STATUS        | RESTARTS    | AGE      |       |
+    | pod/funkwhale-postgres-0            | 1/1       | Running       | 0           | 8m58s    |       |
+    | NAME                                | TYPE      | CLUSTER-IP    | EXTERNAL-IP | PORT(S)  | AGE   |
+    | service/funkwhale-postgres          | ClusterIP | 10.43.107.165 | <none>      | 5432/TCP | 8m59s |
+    | NAME                                | READY     | AGE           |             |          |       |
+    | statefulset.apps/funkwhale-postgres | 1/1       | 8m59s         |             |          |       |
 
 *** funkwhale/pvc.yaml
 #+begin_src yaml :noweb yes :eval no :tangle funkwhale/pvc.yaml
@@ -384,9 +391,7 @@ spec:
   kind: Kustomization
   resources:
   - namespace.yaml
-  - pvc.yaml
-  - sealed-secret.yaml
-  - database.yaml
+  - helm.sources.yaml
   #+end_src
 *** funkwhale/namespace.yaml
   #+begin_src yaml :noweb yes :eval no :tangle funkwhale/namespace.yaml
