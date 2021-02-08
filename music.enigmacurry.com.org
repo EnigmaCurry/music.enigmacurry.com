@@ -272,15 +272,30 @@ Follow the deployment instructions in the Flux library INCLUDE:
     #+begin_src config :noweb yes :eval no
     <<CLUSTER>>
     #+end_src
+*** FUNKWHALE_POSTGRESQL_CHART_VERSION
+The [[https://github.com/bitnami/charts/blob/master/bitnami/postgresql/Chart.yaml][version number of the chart to install postgresql]]:
+    #+name: FUNKWHALE_POSTGRESQL_CHART_VERSION
+    #+begin_src config :noweb yes :eval no
+    10.2.8
+    #+end_src
 ** Funkwhale Deployment
-*** Add Helm chart repositories
+*** Add Bitnami Helm chart repository to Flux:
     #+begin_src shell :noweb yes :eval never-export :exports code
     flux create source helm bitnami \
     --url=https://charts.bitnami.com/bitnami \
     --interval=12h --export > <<SRC_DIR>>/funkwhale/helm.sources.yaml
     #+end_src
+*** Create postgresql Helm release
+    #+begin_src shell :noweb yes :eval never-export :exports code
+    flux create helmrelease postgresql \
+      --interval=12h \
+      --source=HelmRepository/bitnami \
+      --chart=postgresql \
+      --chart-version="<<FUNKWHALE_POSTGRESQL_CHART_VERSION>>" \
+      --export > <<SRC_DIR>>/funkwhale/postgresql.release.yaml
+    #+end_src
 
-*** Create Secrets
+*** TODO Create Secrets
 #+begin_src shell :noweb yes :eval never-export :exports code
 export KUBECONFIG=<<KUBE_CONFIG>>
 kubectl create secret generic funkwhale \
@@ -307,14 +322,8 @@ kubectl create secret generic funkwhale \
     #+end_src
 
     #+RESULTS:
-    | NAME                                | READY     | STATUS        | RESTARTS    | AGE      |       |
-    | pod/funkwhale-postgres-0            | 1/1       | Running       | 0           | 8m58s    |       |
-    | NAME                                | TYPE      | CLUSTER-IP    | EXTERNAL-IP | PORT(S)  | AGE   |
-    | service/funkwhale-postgres          | ClusterIP | 10.43.107.165 | <none>      | 5432/TCP | 8m59s |
-    | NAME                                | READY     | AGE           |             |          |       |
-    | statefulset.apps/funkwhale-postgres | 1/1       | 8m59s         |             |          |       |
 
-*** funkwhale/pvc.yaml
+*** TODO funkwhale/pvc.yaml
 #+begin_src yaml :noweb yes :eval no :tangle funkwhale/pvc.yaml
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -330,7 +339,7 @@ spec:
   storageClassName: local-path
 ---
 #+end_src
-*** funkwhale/database.yaml
+*** TODO funkwhale/database.yaml
 #+begin_src yaml :noweb yes :eval no :tangle funkwhale/database.yaml
 apiVersion: v1
 kind: Service
@@ -385,13 +394,14 @@ spec:
           persistentVolumeClaim:
             claimName: funkwhale-postgres-data
 #+end_src
-*** funkwhale/kustomization.yaml
+*** TODO funkwhale/kustomization.yaml
   #+begin_src yaml :noweb yes :eval no :tangle funkwhale/kustomization.yaml
   apiVersion: kustomize.config.k8s.io/v1beta1
   kind: Kustomization
   resources:
   - namespace.yaml
   - helm.sources.yaml
+  - postgresql.release.yaml
   #+end_src
 *** funkwhale/namespace.yaml
   #+begin_src yaml :noweb yes :eval no :tangle funkwhale/namespace.yaml
