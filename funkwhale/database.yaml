@@ -1,0 +1,52 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: funkwhale-postgres
+  namespace: funkwhale
+spec:
+  selector:
+    app: funkwhale-postgres
+  type: ClusterIP
+  ports:
+    - port: 5432
+      targetPort: 5432
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: funkwhale-postgres
+  namespace: funkwhale
+spec:
+  selector:
+    matchLabels:
+      app: funkwhale-postgres
+  serviceName: funkwhale-postgres
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: funkwhale-postgres
+    spec:
+      containers:
+        - name: funkwhale-postgres
+          image: postgres
+          volumeMounts:
+            - name: funkwhale-postgres-data
+              mountPath: /var/lib/postgresql/data
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: funkwhale
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: funkwhale
+                  key: POSTGRES_PASSWORD
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+      volumes:
+        - name: funkwhale-postgres-data
+          persistentVolumeClaim:
+            claimName: funkwhale-postgres-data
