@@ -161,27 +161,14 @@ Edit the variables for the Traefik config:
  #+end_src
 *** TRAEFIK_ACME_SERVER
  =TRAEFIK_ACME_SERVER= is the URL for the Let's Encrypt API (Or other ACME
- provider). 
+ provider). For development purposes, use the staging URL. For production use
+ the URL https://acme-v02.api.letsencrypt.org/directory instead (will produce
+ valid certificates in web browsers).
+
  #+name: TRAEFIK_ACME_SERVER
  #+begin_src config :eval no
  https://acme-staging-v02.api.letsencrypt.org/directory
  #+end_src
-
- For production, use the =acme-v02= Lets Encrypt server :
-
- : https://acme-v02.api.letsencrypt.org/directory
-
- For staging, use the =acme-staging-v02= Let's Encrypt server :
-
- : https://acme-staging-v02.api.letsencrypt.org/directory
-
- The difference, is that the staging server has much more generous [[https://letsencrypt.org/docs/rate-limits/][rate limiting]],
- but will only provide certificates for testing purposes (ie, they appear INVALID
- in web browsers.) You really should start with the staging server for new
- deployments, because you may find you need to recreate the whole server a few
- times, and if you don't backup and restore the =acme.json= file that Traefik
- needs, it will request the certificates be issued again, incurring the wrath of
- the rate limit, which blocks you out for a week.
 
 *** TRAEFIK_WHOAMI_DOMAIN
  [[https://github.com/traefik/whoami][traefik/whoami]] can be deployed to test Traefik functionality. It needs its own
@@ -212,20 +199,33 @@ v0.14.1
 #+end_src
 ** Traefik Deployment
 #+BEGIN_COMMENT
-Run the shell code blocks outlined in the Traefik library module. Open up the file
-from the INCLUDE directive below. Run the code blocks there, variables like
-=<<SRC_DIR>>= refer back to this current file's directory, /not/ the location of
-the INCLUDE.
+Open the Traefik library module in
+=~/git/vendor/enigmacurry/literate-k3s/lib/traefik.org= that you cloned
+previously, as shown in the INCLUDE statement path below. Follow the directions
+and execute the code blocks there, found in =traefik.org=. Know that when you
+open =traefik.org= after having already opened this current file (and hence
+evaluated the code in the =Emacs Local Variables=), that variable references
+like =<<SRC_DIR>>= refer back to /this current file's/ directory, /not/ in
+relation to where =traefik.org= exists. So that, when you run those shell code
+blocks, you will be creating new directories and files in /this current file's/
+directory. If you are ever unsure exactly what command is going to be run, you
+can usually add an =echo= in front of the line so that the command is parsed but
+not executed.
 #+END_COMMENT
 #+INCLUDE: "~/git/vendor/enigmacurry/literate-k3s/lib/traefik.org"
 ** Sealed Secrets Deployment
-Follow the deployment instructions in the Sealed Secrets library module: 
+#+BEGIN_COMMENT
+Follow the deployment instructions in the Sealed Secrets library INCLUDE:
+#+END_COMMENT
 #+INCLUDE: "~/git/vendor/enigmacurry/literate-k3s/lib/sealed_secrets.org"
 * flux-system
-This installation assumes you already have a remote git repository host, that
-you like, and that you have no need for Gitea, a self-hosted, low-resource,
-cluster-local, github alternative. If you /do/ want that, follow the more in
-depth [[https://github.com/EnigmaCurry/literate-k3s/blob/master/clusters/k3s.example.com/k3s.example.com.org][k3s.example.com]] guide.
+This installation assumes you already have a remote git repository host that you
+trust (probably a third party service like GitLab or GitHub), and that you have
+no need to switch to [[https://gitea.io/][Gitea]], which is a self-hosted, low-resource, cluster-local,
+GitHub-like alternative. If you /do/ want that, follow the more in depth
+[[https://github.com/EnigmaCurry/literate-k3s/blob/master/clusters/k3s.example.com/k3s.example.com.org][k3s.example.com]] guide, which takes a more "self-hosted everything= approach.
+(however, that other guide does not discuss funkwhale, so come back here when
+you're done.)
 ** Flux Config
 *** FLUX_VERSION
 Choose the [[https://github.com/fluxcd/flux2/releases][Flux2 release version]] :
@@ -233,26 +233,37 @@ Choose the [[https://github.com/fluxcd/flux2/releases][Flux2 release version]] :
 v0.7.7
 #+end_src
 *** FLUX_REPO_NAME
-The name of the repository containing these org files, and from which flux
-reads. Not including the domain, just the name.
+The name of the git repository containing these org files, and from which flux
+reads. Usually it's the same as =CLUSTER=.
 #+name: FLUX_REPO_NAME
 #+begin_src config :noweb yes :eval no
-music.enigmacurry.com
+<<CLUSTER>>
+#+end_src
+*** FLUX_REPO_ORG
+The name of the owner of the git repository.
+#+name: FLUX_REPO_ORG
+#+begin_src config :noweb yes :eval no
+EnigmaCurry
+#+end_src
+*** FLUX_REPO_HOST_PORT
+The Hostname and Port number of the git repository remote URL:
+#+name: FLUX_REPO_HOST_PORT
+#+begin_src config :noweb yes :eval no
+github.com:22
 #+end_src
 *** FLUX_GIT_REMOTE
-The SSH Git URL of your remote repository. Note the =ssh://= part and the use of
-a =/= instead of a =:= as compared to the GitHub SSH URL format listed on their
-page.
+The SSH Git URL of your remote repository. Note the syntax difference between
+this and the format that GitHub shows on their repository pages: Must begin with
+=ssh://= and the use of a =/= instead of a =:= between the domain and
+organization name. (This might work with other URL forms, like HTTPS, but this
+is the only one that's been tested:)
 #+name: FLUX_GIT_REMOTE
 #+begin_src config :noweb yes :eval no
-ssh://git@github.com/EnigmaCurry/music.enigmacurry.com.git
+ssh://git@<<FLUX_REPO_HOST_PORT>>/<<FLUX_REPO_ORG>>/<<FLUX_REPO_NAME>>.git
 #+end_src
 ** Flux Deployment
 #+BEGIN_COMMENT
-Run the shell code blocks outlined in the Flux library module. Open up the file
-from the INCLUDE directive below. Run the code blocks there, variables like
-=<<SRC_DIR>>= refer back to this current file's directory, /not/ the location of
-the INCLUDE.
+Follow the deployment instructions in the Flux library INCLUDE:
 #+END_COMMENT
 #+INCLUDE: "~/git/vendor/enigmacurry/literate-k3s/lib/flux.org"
 * LICENSE
