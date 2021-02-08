@@ -285,6 +285,7 @@ The [[https://github.com/bitnami/charts/blob/master/bitnami/postgresql/Chart.yam
     --url=https://charts.bitnami.com/bitnami \
     --interval=12h --export > <<SRC_DIR>>/funkwhale/helm.sources.yaml
     #+end_src
+
 *** Create postgresql Helm release
     #+begin_src shell :noweb yes :eval never-export :exports code
     flux create helmrelease postgresql \
@@ -323,78 +324,7 @@ kubectl create secret generic funkwhale \
 
     #+RESULTS:
 
-*** TODO funkwhale/pvc.yaml
-#+begin_src yaml :noweb yes :eval no :tangle funkwhale/pvc.yaml
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: funkwhale-postgres-data
-  namespace: funkwhale
-spec:
-  accessModes:
-  - ReadWriteOnce
-  resources:
-    requests:
-      storage: 5Gi
-  storageClassName: local-path
----
-#+end_src
-*** TODO funkwhale/database.yaml
-#+begin_src yaml :noweb yes :eval no :tangle funkwhale/database.yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: funkwhale-postgres
-  namespace: funkwhale
-spec:
-  selector:
-    app: funkwhale-postgres
-  type: ClusterIP
-  ports:
-    - port: 5432
-      targetPort: 5432
----
-apiVersion: apps/v1
-kind: StatefulSet
-metadata:
-  name: funkwhale-postgres
-  namespace: funkwhale
-spec:
-  selector:
-    matchLabels:
-      app: funkwhale-postgres
-  serviceName: funkwhale-postgres
-  replicas: 1
-  template:
-    metadata:
-      labels:
-        app: funkwhale-postgres
-    spec:
-      containers:
-        - name: funkwhale-postgres
-          image: postgres
-          volumeMounts:
-            - name: funkwhale-postgres-data
-              mountPath: /var/lib/postgresql/data
-          env:
-            - name: POSTGRES_USER
-              valueFrom:
-                secretKeyRef:
-                  name: funkwhale
-                  key: POSTGRES_USER
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: funkwhale
-                  key: POSTGRES_PASSWORD
-            - name: PGDATA
-              value: /var/lib/postgresql/data/pgdata
-      volumes:
-        - name: funkwhale-postgres-data
-          persistentVolumeClaim:
-            claimName: funkwhale-postgres-data
-#+end_src
-*** TODO funkwhale/kustomization.yaml
+*** funkwhale/kustomization.yaml
   #+begin_src yaml :noweb yes :eval no :tangle funkwhale/kustomization.yaml
   apiVersion: kustomize.config.k8s.io/v1beta1
   kind: Kustomization
