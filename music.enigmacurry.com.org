@@ -1,0 +1,259 @@
+#+title: music.enigmacurry.com
+#+author: EnigmaCurry
+#+OPTIONS: ^:{}
+#+EXPORT_FILE_NAME: index.html
+#+INCLUDE: "~/git/vendor/enigmacurry/literate-k3s/meta/export-html.org"
+
+* Getting Started
+This is a [[https://github.com/EnigmaCurry/literate-k3s][literate-k3s]] Emacs Org-Babel document, (or its exported HTML form on
+the web.) Please read the upstream [[https://enigmacurry.github.io/literate-k3s/#Introduction][literate-k3s Introduction]] if you are new to
+this.
+
+This guide will install [[https://funkwhale.audio/][funkwhale]], a self-hosted (federated) audio hosting
+platform and web player, on a new (single node) [[https://k3s.io][K3s]] cluster that you will
+create.
+
+Your first step is to install literate-k3s, which you just need to clone the
+repository to your workstation:
+
+#+begin_src shell :noweb yes :eval never-export :exports code
+git clone https://github.com/EnigmaCurry/literate-k3s.git \
+    ${HOME}/git/vendor/enigmacurry/literate-k3s
+#+end_src
+
+Your second step is to create another new directory tree on your workstation, to
+form a new git repository, in which to hold all of the configurations for this
+cluster:
+
+#+begin_src shell :noweb yes :eval never-export :exports code
+mkdir -p <<SRC_DIR>>
+mkdir -p <<SRC_DIR>>/kube-system/traefik
+mkdir -p <<SRC_DIR>>/flux-system/
+#+end_src
+
+Download this current org source file into your new directory:
+
+#+begin_src shell :noweb yes :eval never-export :exports code
+cd <<SRC_DIR>>
+curl -Lo <<SRC_URL>>
+#+end_src
+
+Open and edit the downloaded file, in Emacs Org-Mode. Confirm the permission
+dialog to run the initialization code. Configure the variables in the [[Core Config][Core
+Config]] section. When you save this file, it automatically runs
+=org-resolve-deps-tangle=, which (re)creates several YAML manifest files which
+describe all of your cluster resources.
+
+The resulting directory structure will look like this (annotated):
+#+begin_src example :noweb yes
+clusters <-- Main directory holding all cluster repositories:
+ └─<<CLUSTER>> <-- The `Funkwhale` cluster repository
+    ├─.gitignore  <-- git ignores .org-resolve-deps.org on next line
+    ├─.org-resolve-deps.org <-- temporary Org src from org-resolve-deps-tangle
+    ├─flux-system <-- namespace directory for Flux (K8s Continuous Delivery)
+    │  └─kustomization.yaml <-- Kustomize installs the namespace manifest
+    ├─index.html <-- HTML export of this Org source document
+    ├─kube-system <-- Root Cluster namespace
+    │  └─traefik <-- Traefik is our TLS reverse proxy and Ingress Controller
+    │     ├─crd.yaml <-- Traefik Custom Resource Definitions manifest
+    │     ├─daemonset.yaml <-- Traefik DaemonSet manifest runs traefik on all nodes
+    │     ├─kustomization.yaml <-- Kustomize installs all these manifests
+    │     ├─pvc.yaml <-- PhysicalVolumeClaim creates 100MB volume to store acme.json
+    │     ├─rbac.yaml <-- Roles for Traefik to watch and respond to the cluster
+    │     └─whoami.yaml <-- Deployment manifest for `whoami` testing service
+    ├─meta <-- Holds the CSS and JavaScript for the HTML export.
+    │  └─css
+    │     └─build
+    │        ├─all.min.js
+    │        └─solarized-dark.css
+    └─music.enigmacurry.com.org <-- This org file you're reading now.
+#+end_src
+
+* Core Config
+** SRC_URL
+This is the source URL for this document, used in the [[Getting Started][Getting Started]] guide
+above.
+#+name: SRC_URL
+#+begin_src config :noweb yes :eval no
+https://raw.githubusercontent.com/EnigmaCurry/literate-k3s/master/clusters/music.enigmacurry.com/music.enigmacurry.com.org
+#+end_src
+** CLUSTER
+Set =CLUSTER= to be the domain name for your cluster:
+#+name: CLUSTER
+#+begin_src config :noweb yes :eval no
+music.enigmacurry.com
+#+end_src
+** CLUSTER_SSH_USER
+Set =CLUSTER_SSH_USER= to be the admin SSH account of the cluster (usually
+root).
+#+name: CLUSTER_SSH_USER
+#+begin_src config :noweb yes :eval no
+root
+#+end_src
+** KUBE_CONFIG
+  =KUBE_CONFIG= is the local path to the kubectl config file
+  #+name: KUBE_CONFIG
+  #+begin_src config :noweb yes :eval no
+  ${HOME}/.kube/<<CLUSTER>>-config
+  #+end_src
+** kubectl command
+ Since you'll need to specify the kubectl config file each and every time you use
+ =kubectl=, let's create a NoWeb alias for it (=<<kubectl>>=), to use in other
+ code blocks.
+ #+name: kubectl
+ #+begin_src config :noweb yes :eval no
+ kubectl --kubeconfig=<<KUBE_CONFIG>>
+ #+end_src
+
+* Create cluster
+Prepare an Ubuntu or Debian node, setup SSH so that your workstation can access
+the root account with your key file (use =ssh-keygen= and =ssh-copy-id
+root@CLUSTER-DOMAIN= to generate and install key).
+
+Run =apt upgrade= and install =curl= on the server :
+
+#+begin_src shell :noweb yes :eval never-export :exports code :results output
+cat << EOF | ssh <<CLUSTER_SSH_USER>>@<<CLUSTER>> /bin/bash
+apt -qq update && apt -qq upgrade -y && apt install -y curl
+EOF
+#+end_src
+
+#+RESULTS:
+: All packages are up to date.
+: 0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+: Reading package lists...
+: Building dependency tree...
+: Reading state information...
+: curl is already the newest version (7.68.0-1ubuntu2.4).
+: 0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+
+Install [[https://github.com/alexellis/k3sup#readme][k3sup]], then create the cluster:
+
+#+begin_src shell :noweb yes :eval never-export :exports code :results none
+set -e
+mkdir -p ${HOME}/.kube
+k3sup install --host <<CLUSTER>> --user <<CLUSTER_SSH_USER>> \
+  --local-path <<KUBE_CONFIG>> --k3s-extra-args '--disable traefik'
+#+end_src
+
+ * Wait a minute or two for the cluster to come up.
+ * Now test to see if you can connect and output node status:
+
+#+begin_src shell :noweb yes :eval never-export :exports both
+kubectl --kubeconfig=<<KUBE_CONFIG>> get nodes
+#+end_src
+
+#+RESULTS:
+| NAME  | STATUS | ROLES  | AGE   | VERSION      |
+| music | Ready  | master | 7m47s | v1.19.7+k3s1 |
+
+* kube-system
+=kube-system= is the namespace for running system wide features, mostly network
+related. 
+** Traefik Config
+Edit the variables for the Traefik config:
+*** TRAEFIK_ACME_EMAIL
+  =TRAEFIK_ACME_EMAIL= is the email address to register with the ACME service
+  provider. 
+ #+name: TRAEFIK_ACME_EMAIL
+ #+begin_src config :eval no
+ letsencrypt@enigmacurry.com
+ #+end_src
+*** TRAEFIK_ACME_SERVER
+ =TRAEFIK_ACME_SERVER= is the URL for the Let's Encrypt API (Or other ACME
+ provider). 
+ #+name: TRAEFIK_ACME_SERVER
+ #+begin_src config :eval no
+ https://acme-staging-v02.api.letsencrypt.org/directory
+ #+end_src
+
+ For production, use the =acme-v02= Lets Encrypt server :
+
+ : https://acme-v02.api.letsencrypt.org/directory
+
+ For staging, use the =acme-staging-v02= Let's Encrypt server :
+
+ : https://acme-staging-v02.api.letsencrypt.org/directory
+
+ The difference, is that the staging server has much more generous [[https://letsencrypt.org/docs/rate-limits/][rate limiting]],
+ but will only provide certificates for testing purposes (ie, they appear INVALID
+ in web browsers.) You really should start with the staging server for new
+ deployments, because you may find you need to recreate the whole server a few
+ times, and if you don't backup and restore the =acme.json= file that Traefik
+ needs, it will request the certificates be issued again, incurring the wrath of
+ the rate limit, which blocks you out for a week.
+
+*** TRAEFIK_WHOAMI_DOMAIN
+ [[https://github.com/traefik/whoami][traefik/whoami]] can be deployed to test Traefik functionality. It needs its own
+ domain name to respond to. =TRAEFIK_WHOAMI_DOMAIN= is the subdomain that the
+ whoami service responds to.
+ #+name: TRAEFIK_WHOAMI_DOMAIN
+ #+begin_src config :noweb yes :eval no
+ whoami.<<CLUSTER>>
+ #+end_src
+*** TRAEFIK_VERSION
+ The version number of Traefik to install (eg. =2.3=).
+ #+name: TRAEFIK_VERSION
+ #+begin_src config :eval no
+ v2.3
+ #+end_src
+*** TRAEFIK_LOG_LEVEL
+ =TRAEFIK_LOG_LEVEL= is the filter level on the traefik log.
+ #+name: TRAEFIK_LOG_LEVEL
+ #+begin_src config :eval no
+ INFO
+ #+end_src
+** Sealed Secrets Config
+*** SEALED_SECRETS_VERSION
+Choose the [[https://github.com/bitnami-labs/sealed-secrets/releases][release version for Sealed Secrets]]
+#+name: SEALED_SECRETS_VERSION
+#+begin_src config :noweb yes :eval no
+v0.14.1
+#+end_src
+** Traefik Deployment
+Follow the deployment instructions in the Traefik library module (Note that the
+variable =<<SRC_DIR>>= points back to the directory containing /this current/
+file, so files created from =traefik.org= will create file here in this
+directory.):
+#+INCLUDE: "~/git/vendor/enigmacurry/literate-k3s/lib/traefik.org"
+** Sealed Secrets Deployment
+Follow the deployment instructions in the Sealed Secrets library module: 
+#+INCLUDE: "~/git/vendor/enigmacurry/literate-k3s/lib/sealed_secrets.org"
+* flux-system
+This installation assumes you already have a remote git repository host, that
+you like, and that you have no need for Gitea, a self-hosted, low-resource,
+cluster-local, github alternative. If you /do/ want that, follow the more in
+depth [[https://github.com/EnigmaCurry/literate-k3s/blob/master/clusters/k3s.example.com/k3s.example.com.org][k3s.example.com]] guide.
+** Flux Config
+*** FLUX_REPO_NAME
+The name of the repository containing these org files, and from which flux
+reads. Not including the domain, just the name.
+#+name: FLUX_REPO_NAME
+#+begin_src config :noweb yes :eval no
+music.enigmacurry.com
+#+end_src
+*** FLUX_GIT_REMOTE
+The SSH Git URL of your remote repository. Note the =ssh://= part and the use of
+a =/= instead of a =:= as compared to the GitHub SSH URL format listed on their
+page.
+#+name: FLUX_GIT_REMOTE
+#+begin_src config :noweb yes :eval no
+ssh://git@github.com/EnigmaCurry/music.enigmacurry.com.git
+#+end_src
+** Flux Deployment
+Follow the deployment instructions in the Flux library module:
+#+INCLUDE: "~/git/vendor/enigmacurry/literate-k3s/lib/flux.org"
+* LICENSE
+#+INCLUDE: "~/git/vendor/enigmacurry/literate-k3s/LICENSE.org"
+* COMMENT Emacs Local Variables
+This section contains the =Local Variables= that [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Specifying-File-Variables.html#Specifying-File-Variables][Emacs reads when it loads this
+file]]. This section must be located "no more than 3000 characters from the end of
+the file", so you need to keep this as the very last section of this document.
+This section is excluded from the HTML output because it is tagged with
+=COMMENT=. 
+
+# Local Variables:
+# eval: (progn (load-file "~/git/vendor/enigmacurry/literate-k3s/meta/org-meta.el") (literate-k3s-init))
+# End:
+
+
