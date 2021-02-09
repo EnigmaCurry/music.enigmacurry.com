@@ -285,6 +285,17 @@ The [[https://github.com/bitnami/charts/blob/master/bitnami/postgresql/Chart.yam
     #+begin_src config :noweb yes :eval no
     10Gi
     #+end_src
+*** FUNKWHALE_REDIS_CHART_VERSION
+The [[https://github.com/bitnami/charts/blob/master/bitnami/postgresql/Chart.yaml][version number of the chart to install postgresql]]:
+    #+name: FUNKWHALE_REDIS_CHART_VERSION
+    #+begin_src config :noweb yes :eval no
+    12.1.1
+    #+end_src
+*** FUNKWHALE_REDIS_PVC_SIZE
+    #+name: FUNKWHALE_REDIS_PVC_SIZE
+    #+begin_src config :noweb yes :eval no
+    10Gi
+    #+end_src
 ** Funkwhale Deployment
 *** Add Bitnami Helm chart repository to Flux:
     #+begin_src shell :noweb yes :eval never-export :exports code :results none
@@ -292,13 +303,7 @@ The [[https://github.com/bitnami/charts/blob/master/bitnami/postgresql/Chart.yam
     --url=https://charts.bitnami.com/bitnami \
     --interval=12h --export > <<SRC_DIR>>/funkwhale/helm.sources.yaml
     #+end_src
-*** Configure postgresql Helm values
-    #+begin_src yaml :noweb yes :eval no :tangle funkwhale/postgresql.values.yaml
-    postgresqlDatabase: funkwhale
-    postgresqlUsername: funkwhale
-    persistence.size: <<FUNKWHALE_POSTGRESQL_PVC_SIZE>>
-    #+end_src
-*** Create postgresql Helm release
+*** Update Helm releases
     #+begin_src shell :noweb yes :eval never-export :exports code :results none
     flux create helmrelease postgresql \
       --interval=5m \
@@ -308,6 +313,15 @@ The [[https://github.com/bitnami/charts/blob/master/bitnami/postgresql/Chart.yam
       --values=funkwhale/postgresql.values.yaml \
       --chart-version="<<FUNKWHALE_POSTGRESQL_CHART_VERSION>>" \
       --export > <<SRC_DIR>>/funkwhale/postgresql.release.yaml
+
+    flux create helmrelease redis \
+      --interval=5m \
+      --source=HelmRepository/bitnami \
+      --chart=redis \
+      --target-namespace=funkwhale \
+      --values=funkwhale/redis.values.yaml \
+      --chart-version="<<FUNKWHALE_REDIS_CHART_VERSION>>" \
+      --export > <<SRC_DIR>>/funkwhale/redis.release.yaml
     #+end_src
 
 *** Commit and push manifests to git repository
@@ -326,26 +340,17 @@ The [[https://github.com/bitnami/charts/blob/master/bitnami/postgresql/Chart.yam
     #+begin_src shell :noweb yes :eval never-export :exports code
     <<kubectl>> -n funkwhale get all
     #+end_src
-
-    #+RESULTS:
-    | NAME                                             | READY     | STATUS       | RESTARTS    | AGE      |     |
-    | pod/funkwhale-postgresql-postgresql-0            | 1/1       | Running      | 0           | 67s      |     |
-    | NAME                                             | TYPE      | CLUSTER-IP   | EXTERNAL-IP | PORT(S)  | AGE |
-    | service/funkwhale-postgresql-headless            | ClusterIP | None         | <none>      | 5432/TCP | 68s |
-    | service/funkwhale-postgresql                     | ClusterIP | 10.43.130.16 | <none>      | 5432/TCP | 68s |
-    | NAME                                             | READY     | AGE          |             |          |     |
-    | statefulset.apps/funkwhale-postgresql-postgresql | 1/1       | 68s          |             |          |     |
     
     Check that volumes are bound via =local-path= :
     #+begin_src shell :noweb yes :eval never-export :exports code
     <<kubectl>> -n funkwhale get pvc
     #+end_src
 
-    #+RESULTS:
-    | NAME                                   | STATUS | VOLUME                                   | CAPACITY | ACCESS | MODES      | STORAGECLASS | AGE |
-    | data-funkwhale-postgresql-postgresql-0 | Bound  | pvc-ce5d22f1-2138-4d92-9af4-d8a082ffe4fe | 8Gi      | RWO    | local-path | 74s          |     |
-
-
+    Check the helm controller log for important notes about how to access the
+    database via =psql=:
+    #+begin_src shell :noweb yes :eval never-export :exports code
+    <<kubectl>> -n flux-system logs 
+    #+end_src
 *** funkwhale/kustomization.yaml
   #+begin_src yaml :noweb yes :eval no :tangle funkwhale/kustomization.yaml
   apiVersion: kustomize.config.k8s.io/v1beta1
@@ -363,6 +368,19 @@ The [[https://github.com/bitnami/charts/blob/master/bitnami/postgresql/Chart.yam
     name: funkwhale
   #+end_src
 
+*** funkwhale/postgresql.values.yaml
+    #+begin_src yaml :noweb yes :eval no :tangle funkwhale/postgresql.values.yaml
+    postgresqlDatabase: funkwhale
+    postgresqlUsername: funkwhale
+    persistence:
+      size: <<FUNKWHALE_POSTGRESQL_PVC_SIZE>>
+    #+end_src
+*** funkwhale/redis.values.yaml
+    #+begin_src yaml :noweb yes :eval no :tangle funkwhale/redis.values.yaml
+    master:
+      persistence:
+        size: <<FUNKWHALE_REDIS_PVC_SIZE>>
+    #+end_src
 * LICENSE
 #+INCLUDE: "~/git/vendor/enigmacurry/literate-k3s/LICENSE.org"
 * COMMENT Emacs Local Variables

@@ -1,3 +1,4 @@
 postgresqlDatabase: funkwhale
 postgresqlUsername: funkwhale
-persistence.size: 10Gi
+persistence:
+  size: 10Gi
