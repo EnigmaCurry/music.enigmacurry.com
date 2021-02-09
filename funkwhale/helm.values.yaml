@@ -1,4 +1,7 @@
 djangoSecret: insecure-secret
+persistence:
+  enabled: true
+  size: 25Gi
 ingress:
   enabled: true
   hosts:

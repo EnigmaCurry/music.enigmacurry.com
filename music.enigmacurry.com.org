@@ -318,18 +318,42 @@ Follow the deployment instructions in the Flux library INCLUDE:
     #+end_src
 
     #+RESULTS:
-    : NAME        READY   STATUS                                                                                                                                                                                  AGE
-    : funkwhale   False   Helm install failed: unable to build kubernetes objects from release manifest: error validating "": error validating data: unknown object type "nil" in Secret.data.DJANGO_SECRET_KEY   101s
+    : NAME        READY   STATUS                             AGE
+    : funkwhale   True    Release reconciliation succeeded   8m47s
 
     Wait a bit for Flux to deploy, then check the status of services:
     #+begin_src shell :noweb yes :eval never-export :exports code
     <<kubectl>> -n funkwhale get all
     #+end_src
+
+    #+RESULTS:
+    | NAME                                                  | READY     | STATUS       |    RESTARTS | AGE      |       |
+    | pod/funkwhale-funkwhale-redis-master-0                | 1/1       | Running      |           0 | 2m42s    |       |
+    | pod/funkwhale-funkwhale-worker-8674d65f7b-9cg25       | 1/1       | Running      |           0 | 2m42s    |       |
+    | pod/funkwhale-funkwhale-worker-8674d65f7b-cnv6r       | 1/1       | Running      |           0 | 2m42s    |       |
+    | pod/funkwhale-funkwhale-beat-696b558c8d-f4t4n         | 1/1       | Running      |           0 | 2m42s    |       |
+    | pod/funkwhale-funkwhale-844fb49494-wt92d              | 2/2       | Running      |           0 | 2m42s    |       |
+    | NAME                                                  | TYPE      | CLUSTER-IP   | EXTERNAL-IP | PORT(S)  | AGE   |
+    | service/funkwhale-funkwhale-redis-headless            | ClusterIP | None         |      <none> | 6379/TCP | 2m43s |
+    | service/funkwhale-funkwhale-redis-master              | ClusterIP | 10.43.63.150 |      <none> | 6379/TCP | 2m43s |
+    | service/funkwhale-funkwhale                           | ClusterIP | 10.43.80.112 |      <none> | 80/TCP   | 2m43s |
+    | NAME                                                  | READY     | UP-TO-DATE   |   AVAILABLE | AGE      |       |
+    | deployment.apps/funkwhale-funkwhale-worker            | 2/2       | 2            |           2 | 2m42s    |       |
+    | deployment.apps/funkwhale-funkwhale-beat              | 1/1       | 1            |           1 | 2m42s    |       |
+    | deployment.apps/funkwhale-funkwhale                   | 1/1       | 1            |           1 | 2m42s    |       |
+    | NAME                                                  | DESIRED   | CURRENT      |       READY | AGE      |       |
+    | replicaset.apps/funkwhale-funkwhale-worker-8674d65f7b | 2         | 2            |           2 | 2m43s    |       |
+    | replicaset.apps/funkwhale-funkwhale-beat-696b558c8d   | 1         | 1            |           1 | 2m43s    |       |
+    | replicaset.apps/funkwhale-funkwhale-844fb49494        | 1         | 1            |           1 | 2m43s    |       |
+    | NAME                                                  | READY     | AGE          |             |          |       |
+    | statefulset.apps/funkwhale-funkwhale-redis-master     | 1/1       | 2m43s        |             |          |       |
     
     Check that volumes are bound via =local-path= :
     #+begin_src shell :noweb yes :eval never-export :exports code
     <<kubectl>> -n funkwhale get pvc
     #+end_src
+
+    #+RESULTS:
 
 *** funkwhale/kustomization.yaml
   #+begin_src yaml :noweb yes :eval no :tangle funkwhale/kustomization.yaml
@@ -351,6 +375,9 @@ Follow the deployment instructions in the Flux library INCLUDE:
 *** funkwhale/helm.values.yaml
     #+begin_src yaml :noweb yes :eval no :tangle funkwhale/helm.values.yaml
     djangoSecret: insecure-secret
+    persistence:
+      enabled: true
+      size: 25Gi
     ingress:
       enabled: true
       hosts:
