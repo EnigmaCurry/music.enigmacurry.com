@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2021-02-09 Tue 09:03 -->
+<!-- 2021-02-09 Tue 11:12 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>music.enigmacurry.com</title>
@@ -390,28 +390,47 @@ for the JavaScript code in this tag.
 </li>
 </ul>
 </li>
-<li><a href="#Funkwhale">6. Funkwhale</a>
+<li><a href="#rook-nfs-system">6. rook-nfs-system</a>
 <ul>
-<li><a href="#Funkwhale%20Config">6.1. Funkwhale Config</a>
+<li><a href="#Rook%20Config">6.1. Rook Config</a>
 <ul>
-<li><a href="#FUNKWHALE_DOMAIN">6.1.1. FUNKWHALE_DOMAIN</a></li>
-<li><a href="#FUNKWHALE_HELM_CHART_VERSION">6.1.2. FUNKWHALE_HELM_CHART_VERSION</a></li>
+<li><a href="#ROOK_PVC_SIZE">6.1.1. ROOK_PVC_SIZE</a></li>
+<li><a href="#ROOK_VERSION">6.1.2. ROOK_VERSION</a></li>
 </ul>
 </li>
-<li><a href="#Funkwhale%20Deployment">6.2. Funkwhale Deployment</a>
+<li><a href="#Rook%20Deployment">6.2. Rook Deployment</a>
 <ul>
-<li><a href="#Add%20Helm%20chart%20repositories%20to%20Flux%3A">6.2.1. Add Helm chart repositories to Flux:</a></li>
-<li><a href="#Update%20Helm%20releases">6.2.2. Update Helm releases</a></li>
-<li><a href="#Commit%20and%20push%20manifests%20to%20git%20repository">6.2.3. Commit and push manifests to git repository</a></li>
-<li><a href="#Check%20services%3A">6.2.4. Check services:</a></li>
-<li><a href="#funkwhale%2Fkustomization.yaml">6.2.5. funkwhale/kustomization.yaml</a></li>
-<li><a href="#funkwhale%2Fnamespace.yaml">6.2.6. funkwhale/namespace.yaml</a></li>
-<li><a href="#funkwhale%2Fhelm.values.yaml">6.2.7. funkwhale/helm.values.yaml</a></li>
+<li><a href="#Introduction%20to%20Rook">6.2.1. Introduction to Rook</a></li>
+<li><a href="#Prepare%20Host%20Nodes">6.2.2. Prepare Host Nodes</a></li>
+<li><a href="#rook-nfs-system%2Fpvc.yaml">6.2.3. rook-nfs-system/pvc.yaml</a></li>
+<li><a href="#rook-nfs-system%2Fnfs.yaml">6.2.4. rook-nfs-system/nfs.yaml</a></li>
+<li><a href="#rook-nfs-system%2Fkustomization.yaml">6.2.5. rook-nfs-system/kustomization.yaml</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#LICENSE">7. LICENSE</a></li>
+<li><a href="#Funkwhale">7. Funkwhale</a>
+<ul>
+<li><a href="#Funkwhale%20Config">7.1. Funkwhale Config</a>
+<ul>
+<li><a href="#FUNKWHALE_DOMAIN">7.1.1. FUNKWHALE_DOMAIN</a></li>
+<li><a href="#FUNKWHALE_HELM_CHART_VERSION">7.1.2. FUNKWHALE_HELM_CHART_VERSION</a></li>
+</ul>
+</li>
+<li><a href="#Funkwhale%20Deployment">7.2. Funkwhale Deployment</a>
+<ul>
+<li><a href="#Add%20Helm%20chart%20repositories%20to%20Flux%3A">7.2.1. Add Helm chart repositories to Flux:</a></li>
+<li><a href="#Update%20Helm%20releases">7.2.2. Update Helm releases</a></li>
+<li><a href="#Commit%20and%20push%20manifests%20to%20git%20repository">7.2.3. Commit and push manifests to git repository</a></li>
+<li><a href="#Check%20services%3A">7.2.4. Check services:</a></li>
+<li><a href="#funkwhale%2Fkustomization.yaml">7.2.5. funkwhale/kustomization.yaml</a></li>
+<li><a href="#funkwhale%2Fnamespace.yaml">7.2.6. funkwhale/namespace.yaml</a></li>
+<li><a href="#funkwhale%2Fhelm.values.yaml">7.2.7. funkwhale/helm.values.yaml</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#LICENSE">8. LICENSE</a></li>
 </ul>
 </div>
 </div>
@@ -449,10 +468,11 @@ cluster:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell">mkdir -p /home/ryan/git/clusters/music.enigmacurry.com
-mkdir -p /home/ryan/git/clusters/music.enigmacurry.com/kube-system/traefik
+<pre class="src src-shell">mkdir -p /home/ryan/git/clusters/music.enigmacurry.com/
+mkdir -p /home/ryan/git/clusters/music.enigmacurry.com/kube-system/traefik/
 mkdir -p /home/ryan/git/clusters/music.enigmacurry.com/flux-system/
 mkdir -p /home/ryan/git/clusters/music.enigmacurry.com/funkwhale/
+mkdir -p /home/ryan/git/clusters/music.enigmacurry.com/rook-nfs-system/
 </pre>
 </div>
 
@@ -516,7 +536,7 @@ This is the source URL for this document, used in the <a href="#Getting%20Starte
 above.
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org105c77f">https://raw.githubusercontent.com/EnigmaCurry/literate-k3s/master/clusters/music.enigmacurry.com/music.enigmacurry.com.org
+<pre class="src src-config" id="org98a971d">https://raw.githubusercontent.com/EnigmaCurry/literate-k3s/master/clusters/music.enigmacurry.com/music.enigmacurry.com.org
 </pre>
 </div>
 </div>
@@ -528,7 +548,7 @@ above.
 Set <code>CLUSTER</code> to be the domain name for your cluster:
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org08262cb">music.enigmacurry.com
+<pre class="src src-config" id="org22959f7">music.enigmacurry.com
 </pre>
 </div>
 </div>
@@ -541,7 +561,7 @@ Set <code>CLUSTER_SSH_USER</code> to be the admin SSH account of the cluster (us
 root).
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="orgfec388b">root
+<pre class="src src-config" id="orgfbbc77e">root
 </pre>
 </div>
 </div>
@@ -553,7 +573,7 @@ root).
 <code>KUBE_CONFIG</code> is the local path to the kubectl config file
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="orgeb856fe">${HOME}/.kube/music.enigmacurry.com-config
+<pre class="src src-config" id="org28c8535">${HOME}/.kube/music.enigmacurry.com-config
 </pre>
 </div>
 </div>
@@ -567,7 +587,7 @@ Since you'll need to specify the kubectl config file each and every time you use
 code blocks.
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org66f16f0">kubectl --kubeconfig=${HOME}/.kube/music.enigmacurry.com-config
+<pre class="src src-config" id="orgb3ebb51">kubectl --kubeconfig=${HOME}/.kube/music.enigmacurry.com-config
 </pre>
 </div>
 </div>
@@ -674,7 +694,7 @@ Edit the variables for the Traefik config:
 provider. 
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org1f7d39e">letsencrypt@enigmacurry.com
+<pre class="src src-config" id="orgaa92dba">letsencrypt@enigmacurry.com
 </pre>
 </div>
 </div>
@@ -690,7 +710,7 @@ valid certificates in web browsers).
 </p>
 
 <div class="org-src-container">
-<pre class="src src-config" id="org8a648db">https://acme-staging-v02.api.letsencrypt.org/directory
+<pre class="src src-config" id="orge22acc4">https://acme-staging-v02.api.letsencrypt.org/directory
 </pre>
 </div>
 </div>
@@ -705,7 +725,7 @@ domain name to respond to. <code>TRAEFIK_WHOAMI_DOMAIN</code> is the subdomain t
 whoami service responds to.
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org07e6917">whoami.music.enigmacurry.com
+<pre class="src src-config" id="org79170a3">whoami.music.enigmacurry.com
 </pre>
 </div>
 </div>
@@ -717,7 +737,7 @@ whoami service responds to.
 The version number of Traefik to install (eg. <code>2.3</code>).
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org35f216f">v2.3
+<pre class="src src-config" id="org17dac70">v2.3
 </pre>
 </div>
 </div>
@@ -729,7 +749,7 @@ The version number of Traefik to install (eg. <code>2.3</code>).
 <code>TRAEFIK_LOG_LEVEL</code> is the filter level on the traefik log.
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="orgd154672">INFO
+<pre class="src src-config" id="orge242b69">INFO
 </pre>
 </div>
 </div>
@@ -746,7 +766,7 @@ The version number of Traefik to install (eg. <code>2.3</code>).
 Choose the <a href="https://github.com/bitnami-labs/sealed-secrets/releases">release version for Sealed Secrets</a>
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org7762d6b">v0.14.1
+<pre class="src src-config" id="org8570b23">v0.14.1
 </pre>
 </div>
 </div>
@@ -821,7 +841,7 @@ Test with TLS verification on:
 </div>
 
 <p>
-TLS will not verify until you use the production <a href="#org8a648db">TRAEFIK_ACME_SERVER</a>.
+TLS will not verify until you use the production <a href="#orge22acc4">TRAEFIK_ACME_SERVER</a>.
 </p>
 </div>
 </div>
@@ -1159,7 +1179,7 @@ to direct traffic to any other node.
 <div class="outline-text-4" id="text-4-3-8">
 <p>
 <a href="https://github.com/traefik/whoami">traefik/whoami</a> can be deployed to test Traefik functionality. It listens to the
-domain <a href="#org07e6917">TRAEFIK_WHOAMI_DOMAIN</a> (eg. <code>whoami.k3s.example.com</code>).
+domain <a href="#org79170a3">TRAEFIK_WHOAMI_DOMAIN</a> (eg. <code>whoami.k3s.example.com</code>).
 </p>
 
 <div class="org-src-container">
@@ -1302,7 +1322,7 @@ The name of the git repository containing these org files, and from which flux
 reads. Usually it's the same as <code>CLUSTER</code>.
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org927d2d6">music.enigmacurry.com
+<pre class="src src-config" id="org153eac9">music.enigmacurry.com
 </pre>
 </div>
 </div>
@@ -1314,7 +1334,7 @@ reads. Usually it's the same as <code>CLUSTER</code>.
 The name of the owner of the git repository.
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="orga7ab73d">EnigmaCurry
+<pre class="src src-config" id="org26bda13">EnigmaCurry
 </pre>
 </div>
 </div>
@@ -1326,7 +1346,7 @@ The name of the owner of the git repository.
 The Hostname and Port number of the git repository remote URL:
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org3c2d54b">github.com:22
+<pre class="src src-config" id="org5a9332f">github.com:22
 </pre>
 </div>
 </div>
@@ -1342,7 +1362,7 @@ organization name. (This might work with other URL forms, like HTTPS, but this
 is the only one that's been tested:)
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org4d7e642">ssh://git@github.com:22/EnigmaCurry/music.enigmacurry.com.git
+<pre class="src src-config" id="org098ca60">ssh://git@github.com:22/EnigmaCurry/music.enigmacurry.com.git
 </pre>
 </div>
 </div>
@@ -1409,7 +1429,7 @@ with its state.
 
 <p>
 If using Gitea, click the <code>+</code> icon in the upper right corner to create a <code>New
-Repository</code>. Call the new repository the same as <a href="#org927d2d6">FLUX_REPO_NAME</a>.
+Repository</code>. Call the new repository the same as <a href="#org153eac9">FLUX_REPO_NAME</a>.
 </p>
 
 <p>
@@ -1628,29 +1648,210 @@ And in another minute or so, the namespace should be gone:
 </div>
 </div>
 </div>
-<div id="outline-container-Funkwhale" class="outline-2">
-<h2 id="Funkwhale"><span class="section-number-2">6</span> Funkwhale</h2>
+<div id="outline-container-rook-nfs-system" class="outline-2">
+<h2 id="rook-nfs-system"><span class="section-number-2">6</span> rook-nfs-system</h2>
 <div class="outline-text-2" id="text-6">
 </div>
-<div id="outline-container-Funkwhale%20Config" class="outline-3">
-<h3 id="Funkwhale%20Config"><span class="section-number-3">6.1</span> Funkwhale Config</h3>
+<div id="outline-container-Rook%20Config" class="outline-3">
+<h3 id="Rook%20Config"><span class="section-number-3">6.1</span> Rook Config</h3>
 <div class="outline-text-3" id="text-6-1">
 </div>
-<div id="outline-container-FUNKWHALE_DOMAIN" class="outline-4">
-<h4 id="FUNKWHALE_DOMAIN"><span class="section-number-4">6.1.1</span> FUNKWHALE_DOMAIN</h4>
+<div id="outline-container-ROOK_PVC_SIZE" class="outline-4">
+<h4 id="ROOK_PVC_SIZE"><span class="section-number-4">6.1.1</span> ROOK_PVC_SIZE</h4>
 <div class="outline-text-4" id="text-6-1-1">
+<p>
+The size of root Rook volume (contains ALL other rook volumes)
+</p>
+<div class="org-src-container">
+<pre class="src src-config" id="org3dd77d4">50Gi
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-ROOK_VERSION" class="outline-4">
+<h4 id="ROOK_VERSION"><span class="section-number-4">6.1.2</span> ROOK_VERSION</h4>
+<div class="outline-text-4" id="text-6-1-2">
+<p>
+Use the latest version from <a href="https://github.com/rook/rook/releases">https://github.com/rook/rook/releases</a>
+</p>
+<div class="org-src-container">
+<pre class="src src-config" id="orgb06a205">v1.5.6
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-Rook%20Deployment" class="outline-3">
+<h3 id="Rook%20Deployment"><span class="section-number-3">6.2</span> Rook Deployment</h3>
+<div class="outline-text-3" id="text-6-2">
+</div>
+<div id="outline-container-Introduction%20to%20Rook" class="outline-4">
+<h4 id="Introduction%20to%20Rook"><span class="section-number-4">6.2.1</span> Introduction to Rook</h4>
+<div class="outline-text-4" id="text-6-2-1">
+<p>
+Out of the box, K3s already supports volumes using the <a href="https://github.com/rancher/local-path-provisioner">local-path-provisioner</a>,
+which dynamically provisions persistent storage based upon PhysicalVolumeClaim
+(PVC) records in Kubernetes. This storage is made on the host filesystem of the
+same node as the pod that needs to mount said storage. The volume for each PVC
+is stored as a directory on the host node filesystem like:
+</p>
+
+<pre class="example">
+/var/lib/rancher/k3s/storage/pvc-2812c4be-c2c3-44ae-85f8-2a8da4f6554c_kube-system_traefik-data
+</pre>
+
+
+<p>
+(This is for example the directory that stores Traefik's PVC, holding
+<code>acme.json</code>, and you can see <code>acme.json</code> as a regular file in this directory on
+the host.)
+</p>
+
+<p>
+The type of storage that the local-path-provisioner provides, only supports a
+specific kind of <a href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes">Access Mode</a>, namely <code>ReadWriteOnce</code> (local-path-provisioner
+storage is analogous to <code>HostPath</code> storage as written in the k8s documentation).
+A volume with a <code>ReadWriteOnce</code> access mode "can be mounted as read-write [only]
+by a single node". This makes sense for a typical deployment like a Database
+(StatefulSet), where you have one volume that only needs to be accessed by a
+single container. Or, you might have multiple containers accessing this volume,
+<i>as long as all of the containers are in the same Pod</i> (so-called Sidecar
+containers). Pods guarantee that containers run together, on the same host node,
+therefore Pods can access the same local file-systems.
+</p>
+
+<p>
+If you need two different Pods to be able to access the same volume, you need to
+use the <code>ReadWriteMany</code> or <code>ReadOnlyMany</code> access modes, both of which are
+unsupported by the local-path-provisioner. In order to share volumes with more
+than one pod (in other words: across the network), you need a network
+file-system (NFS, GlusterFS, CephFS, &#x2026; )
+</p>
+
+<p>
+Even if you are only going to have a single-node cluster, it may still make
+sense to run a Network Filesystem, simply because it is more convenient to
+create new Pods than it is to create Sidecar containers inside of existing
+Pods.. (especially when using two different helm charts from different vendors)
+</p>
+
+<p>
+<a href="https://rook.io/docs/rook/v1.5/nfs.html">Rook</a> can service as an NFS server (standard UNIX Network File System) and
+dynamic volume provisioner. local-path-provisioner should still be used by
+default, but when you need <code>ReadWriteMany</code> it can be used instead of
+local-path-provisoner. <a href="https://marcbrandner.com/blog/your-very-own-kubernetes-readwritemany-storage/">Marc Brandner wrote a nice blog post about Rook NFS that
+describes this setup in detph</a>, much of which will be mirrored here in this
+document.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-Prepare%20Host%20Nodes" class="outline-4">
+<h4 id="Prepare%20Host%20Nodes"><span class="section-number-4">6.2.2</span> Prepare Host Nodes</h4>
+<div class="outline-text-4" id="text-6-2-2">
+<p>
+The host operating system of the nodes needs additional tools in order to
+support Rook. 
+</p>
+
+<p>
+The NFS client tools need to be installed:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">cat &lt;&lt; EOF | ssh root@music.enigmacurry.com /bin/bash
+<span style="color: #ffff00; font-weight: bold;">apt -qq update &amp;&amp; apt install -y nfs-common</span>
+<span style="color: #ffff00; font-weight: bold;">EOF</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-rook-nfs-system%2Fpvc.yaml" class="outline-4">
+<h4 id="rook-nfs-system%2Fpvc.yaml"><span class="section-number-4">6.2.3</span> rook-nfs-system/pvc.yaml</h4>
+<div class="outline-text-4" id="text-6-2-3">
+<div class="org-src-container">
+<pre class="src src-yaml"><span style="color: #7590db;">apiVersion</span>: v1
+<span style="color: #7590db;">kind</span>: PersistentVolumeClaim
+<span style="color: #7590db;">metadata</span>:
+  <span style="color: #7590db;">name</span>: nfs-default-claim
+  <span style="color: #7590db;">namespace</span>: rook-nfs-system
+<span style="color: #7590db;">spec</span>:
+  <span style="color: #7590db;">accessModes</span>:
+  - ReadWriteOnce
+  <span style="color: #7590db;">resources</span>:
+    <span style="color: #7590db;">requests</span>:
+      <span style="color: #7590db;">storage</span>: 50Gi
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-rook-nfs-system%2Fnfs.yaml" class="outline-4">
+<h4 id="rook-nfs-system%2Fnfs.yaml"><span class="section-number-4">6.2.4</span> rook-nfs-system/nfs.yaml</h4>
+<div class="outline-text-4" id="text-6-2-4">
+<div class="org-src-container">
+<pre class="src src-yaml"><span style="color: #7590db;">apiVersion</span>: nfs.rook.io/v1alpha1
+<span style="color: #7590db;">kind</span>: NFSServer
+<span style="color: #7590db;">metadata</span>:
+  <span style="color: #7590db;">name</span>: rook-nfs
+  <span style="color: #7590db;">namespace</span>: rook-nfs-system
+<span style="color: #7590db;">spec</span>:
+  <span style="color: #7590db;">replicas</span>: 1
+  <span style="color: #7590db;">exports</span>:
+  - <span style="color: #7590db;">name</span>: share1
+    <span style="color: #7590db;">server</span>:
+      <span style="color: #7590db;">accessMode</span>: ReadWrite
+      <span style="color: #7590db;">squash</span>: <span style="color: #2d9574;">"none"</span>
+    <span style="color: #7590db;">persistentVolumeClaim</span>:
+      <span style="color: #7590db;">claimName</span>: nfs-default-claim
+  <span style="color: #7590db;">annotations</span>:
+    <span style="color: #7590db;">rook</span>: nfs
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-rook-nfs-system%2Fkustomization.yaml" class="outline-4">
+<h4 id="rook-nfs-system%2Fkustomization.yaml"><span class="section-number-4">6.2.5</span> rook-nfs-system/kustomization.yaml</h4>
+<div class="outline-text-4" id="text-6-2-5">
+<div class="org-src-container">
+<pre class="src src-yaml"><span style="color: #7590db;">apiVersion</span>: kustomize.config.k8s.io/v1beta1
+<span style="color: #7590db;">kind</span>: Kustomization
+<span style="color: #7590db;">resources</span>:
+- https://raw.githubusercontent.com/rook/rook/v1.5.6/cluster/examples/kubernetes/nfs/common.yaml
+- https://raw.githubusercontent.com/rook/rook/v1.5.6/cluster/examples/kubernetes/nfs/operator.yaml
+- https://raw.githubusercontent.com/rook/rook/v1.5.6/cluster/examples/kubernetes/nfs/rbac.yaml
+- nfs-server.yaml
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-Funkwhale" class="outline-2">
+<h2 id="Funkwhale"><span class="section-number-2">7</span> Funkwhale</h2>
+<div class="outline-text-2" id="text-7">
+</div>
+<div id="outline-container-Funkwhale%20Config" class="outline-3">
+<h3 id="Funkwhale%20Config"><span class="section-number-3">7.1</span> Funkwhale Config</h3>
+<div class="outline-text-3" id="text-7-1">
+</div>
+<div id="outline-container-FUNKWHALE_DOMAIN" class="outline-4">
+<h4 id="FUNKWHALE_DOMAIN"><span class="section-number-4">7.1.1</span> FUNKWHALE_DOMAIN</h4>
+<div class="outline-text-4" id="text-7-1-1">
 <p>
 Funkwhale will respond on the main cluster domain:
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="orge66d655">music.enigmacurry.com
+<pre class="src src-config" id="org485387b">music.enigmacurry.com
 </pre>
 </div>
 </div>
 </div>
 <div id="outline-container-FUNKWHALE_HELM_CHART_VERSION" class="outline-4">
-<h4 id="FUNKWHALE_HELM_CHART_VERSION"><span class="section-number-4">6.1.2</span> FUNKWHALE_HELM_CHART_VERSION</h4>
-<div class="outline-text-4" id="text-6-1-2">
+<h4 id="FUNKWHALE_HELM_CHART_VERSION"><span class="section-number-4">7.1.2</span> FUNKWHALE_HELM_CHART_VERSION</h4>
+<div class="outline-text-4" id="text-7-1-2">
 <div class="org-src-container">
 <pre class="src src-config">0.3.6
 </pre>
@@ -1659,12 +1860,12 @@ Funkwhale will respond on the main cluster domain:
 </div>
 </div>
 <div id="outline-container-Funkwhale%20Deployment" class="outline-3">
-<h3 id="Funkwhale%20Deployment"><span class="section-number-3">6.2</span> Funkwhale Deployment</h3>
-<div class="outline-text-3" id="text-6-2">
+<h3 id="Funkwhale%20Deployment"><span class="section-number-3">7.2</span> Funkwhale Deployment</h3>
+<div class="outline-text-3" id="text-7-2">
 </div>
 <div id="outline-container-Add%20Helm%20chart%20repositories%20to%20Flux%3A" class="outline-4">
-<h4 id="Add%20Helm%20chart%20repositories%20to%20Flux%3A"><span class="section-number-4">6.2.1</span> Add Helm chart repositories to Flux:</h4>
-<div class="outline-text-4" id="text-6-2-1">
+<h4 id="Add%20Helm%20chart%20repositories%20to%20Flux%3A"><span class="section-number-4">7.2.1</span> Add Helm chart repositories to Flux:</h4>
+<div class="outline-text-4" id="text-7-2-1">
 <p>
 A <a href="https://gitlab.com/ananace/charts/-/tree/master/charts/funkwhale">very nice person packaged a funkwhale helm chart</a>:
 </p>
@@ -1680,8 +1881,8 @@ flux create source helm ananace <span style="color: #2d9574;">\</span>
 </div>
 </div>
 <div id="outline-container-Update%20Helm%20releases" class="outline-4">
-<h4 id="Update%20Helm%20releases"><span class="section-number-4">6.2.2</span> Update Helm releases</h4>
-<div class="outline-text-4" id="text-6-2-2">
+<h4 id="Update%20Helm%20releases"><span class="section-number-4">7.2.2</span> Update Helm releases</h4>
+<div class="outline-text-4" id="text-7-2-2">
 <div class="org-src-container">
 <pre class="src src-shell">flux create helmrelease funkwhale <span style="color: #2d9574;">\</span>
   --interval=<span style="color: #a45bad;">5m</span> <span style="color: #2d9574;">\</span>
@@ -1697,8 +1898,8 @@ flux create source helm ananace <span style="color: #2d9574;">\</span>
 </div>
 
 <div id="outline-container-Commit%20and%20push%20manifests%20to%20git%20repository" class="outline-4">
-<h4 id="Commit%20and%20push%20manifests%20to%20git%20repository"><span class="section-number-4">6.2.3</span> Commit and push manifests to git repository</h4>
-<div class="outline-text-4" id="text-6-2-3">
+<h4 id="Commit%20and%20push%20manifests%20to%20git%20repository"><span class="section-number-4">7.2.3</span> Commit and push manifests to git repository</h4>
+<div class="outline-text-4" id="text-7-2-3">
 <div class="org-src-container">
 <pre class="src src-shell">git -C /home/ryan/git/clusters/music.enigmacurry.com add funkwhale
 git -C /home/ryan/git/clusters/music.enigmacurry.com commit -m <span style="color: #2d9574;">"Funkwhale"</span>
@@ -1716,8 +1917,8 @@ Now flux will apply the manifests for you..
 </div>
 </div>
 <div id="outline-container-Check%20services%3A" class="outline-4">
-<h4 id="Check%20services%3A"><span class="section-number-4">6.2.4</span> Check services:</h4>
-<div class="outline-text-4" id="text-6-2-4">
+<h4 id="Check%20services%3A"><span class="section-number-4">7.2.4</span> Check services:</h4>
+<div class="outline-text-4" id="text-7-2-4">
 <p>
 Check the status of the helm release:
 </p>
@@ -1738,8 +1939,8 @@ Check that volumes are bound via <code>local-path</code> :
 </div>
 
 <div id="outline-container-funkwhale%2Fkustomization.yaml" class="outline-4">
-<h4 id="funkwhale%2Fkustomization.yaml"><span class="section-number-4">6.2.5</span> funkwhale/kustomization.yaml</h4>
-<div class="outline-text-4" id="text-6-2-5">
+<h4 id="funkwhale%2Fkustomization.yaml"><span class="section-number-4">7.2.5</span> funkwhale/kustomization.yaml</h4>
+<div class="outline-text-4" id="text-7-2-5">
 <div class="org-src-container">
 <pre class="src src-yaml"><span style="color: #7590db;">apiVersion</span>: kustomize.config.k8s.io/v1beta1
 <span style="color: #7590db;">kind</span>: Kustomization
@@ -1752,8 +1953,8 @@ Check that volumes are bound via <code>local-path</code> :
 </div>
 </div>
 <div id="outline-container-funkwhale%2Fnamespace.yaml" class="outline-4">
-<h4 id="funkwhale%2Fnamespace.yaml"><span class="section-number-4">6.2.6</span> funkwhale/namespace.yaml</h4>
-<div class="outline-text-4" id="text-6-2-6">
+<h4 id="funkwhale%2Fnamespace.yaml"><span class="section-number-4">7.2.6</span> funkwhale/namespace.yaml</h4>
+<div class="outline-text-4" id="text-7-2-6">
 <div class="org-src-container">
 <pre class="src src-yaml"><span style="color: #7590db;">apiVersion</span>: v1
 <span style="color: #7590db;">kind</span>: Namespace
@@ -1765,8 +1966,8 @@ Check that volumes are bound via <code>local-path</code> :
 </div>
 
 <div id="outline-container-funkwhale%2Fhelm.values.yaml" class="outline-4">
-<h4 id="funkwhale%2Fhelm.values.yaml"><span class="section-number-4">6.2.7</span> funkwhale/helm.values.yaml</h4>
-<div class="outline-text-4" id="text-6-2-7">
+<h4 id="funkwhale%2Fhelm.values.yaml"><span class="section-number-4">7.2.7</span> funkwhale/helm.values.yaml</h4>
+<div class="outline-text-4" id="text-7-2-7">
 <div class="org-src-container">
 <pre class="src src-yaml"><span style="color: #7590db;">djangoSecret</span>: insecure-secret
 <span style="color: #7590db;">persistence</span>:
@@ -1789,8 +1990,8 @@ Check that volumes are bound via <code>local-path</code> :
 </div>
 </div>
 <div id="outline-container-LICENSE" class="outline-2">
-<h2 id="LICENSE"><span class="section-number-2">7</span> LICENSE</h2>
-<div class="outline-text-2" id="text-7">
+<h2 id="LICENSE"><span class="section-number-2">8</span> LICENSE</h2>
+<div class="outline-text-2" id="text-8">
 <p>
 Here is the license for <a href="https://github.com/EnigmaCurry/literate-k3s">enigmacurry/literate-k3s</a> and its accompanying libraries:
 </p>
@@ -1860,7 +2061,7 @@ well, so I instead opted to copy them here.
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: EnigmaCurry</p>
-<p class="date">Created: 2021-02-09 Tue 09:03</p>
+<p class="date">Created: 2021-02-09 Tue 11:12</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

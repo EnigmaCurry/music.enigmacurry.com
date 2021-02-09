@@ -26,10 +26,11 @@ form a new git repository, in which to hold all of the configurations for this
 cluster:
 
 #+begin_src shell :noweb yes :eval never-export :exports code
-mkdir -p <<SRC_DIR>>
-mkdir -p <<SRC_DIR>>/kube-system/traefik
+mkdir -p <<SRC_DIR>>/
+mkdir -p <<SRC_DIR>>/kube-system/traefik/
 mkdir -p <<SRC_DIR>>/flux-system/
 mkdir -p <<SRC_DIR>>/funkwhale/
+mkdir -p <<SRC_DIR>>/rook-nfs-system/
 #+end_src
 
 Download this current org source file into your new directory:
@@ -266,6 +267,26 @@ ssh://git@<<FLUX_REPO_HOST_PORT>>/<<FLUX_REPO_ORG>>/<<FLUX_REPO_NAME>>.git
 Follow the deployment instructions in the Flux library INCLUDE:
 #+END_COMMENT
 #+INCLUDE: "~/git/vendor/enigmacurry/literate-k3s/lib/flux.org"
+* rook-nfs-system
+** Rook Config
+*** ROOK_PVC_SIZE
+    The size of root Rook volume (contains ALL other rook volumes)
+    #+name: ROOK_PVC_SIZE
+    #+begin_src config :noweb yes :eval no
+    50Gi
+    #+end_src
+*** ROOK_VERSION
+    Use the latest version from https://github.com/rook/rook/releases
+    #+name: ROOK_VERSION
+    #+begin_src config :noweb yes :eval no
+    v1.5.6
+    #+end_src
+
+** Rook Deployment
+#+BEGIN_COMMENT
+Follow the deployment instructions in the Rook library INCLUDE:
+#+END_COMMENT
+#+INCLUDE: "~/git/vendor/enigmacurry/literate-k3s/lib/rook.org"
 * Funkwhale
 ** Funkwhale Config
 *** FUNKWHALE_DOMAIN
