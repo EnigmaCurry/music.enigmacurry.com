@@ -8,3 +8,13 @@ spec:
   interval: 12h0m0s
   url: https://charts.bitnami.com/bitnami
 
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta1
+kind: HelmRepository
+metadata:
+  name: ananace
+  namespace: flux-system
+spec:
+  interval: 12h0m0s
+  url: https://ananace.gitlab.io/charts
+

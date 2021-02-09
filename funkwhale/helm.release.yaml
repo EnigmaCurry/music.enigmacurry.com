@@ -1,0 +1,27 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: funkwhale
+  namespace: flux-system
+spec:
+  chart:
+    spec:
+      chart: funkwhale
+      sourceRef:
+        kind: HelmRepository
+        name: ananace
+  interval: 5m0s
+  targetNamespace: funkwhale
+  values:
+    ingress:
+      annotations:
+        kubernetes.io/ingress.class: traefik
+        traefik.ingress.kubernetes.io/router.tls.certresolver: default
+      enabled: true
+      hosts:
+      - host: music.enigmacurry.com
+        path: /
+        serviceName: funkwhale
+        servicePort: 80
+

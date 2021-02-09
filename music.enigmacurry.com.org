@@ -273,55 +273,30 @@ Follow the deployment instructions in the Flux library INCLUDE:
     #+begin_src config :noweb yes :eval no
     <<CLUSTER>>
     #+end_src
-*** FUNKWHALE_POSTGRESQL_CHART_VERSION
-The [[https://github.com/bitnami/charts/blob/master/bitnami/postgresql/Chart.yaml][version number of the chart to install postgresql]]:
-    #+name: FUNKWHALE_POSTGRESQL_CHART_VERSION
+*** FUNKWHALE_HELM_CHART_VERSION
     #+begin_src config :noweb yes :eval no
-    10.1.1
-    #+end_src
-*** FUNKWHALE_POSTGRESQL_PVC_SIZE
-    Size of data volume for Funkwhale's postgresql:
-    #+name: FUNKWHALE_POSTGRESQL_PVC_SIZE
-    #+begin_src config :noweb yes :eval no
-    10Gi
-    #+end_src
-*** FUNKWHALE_REDIS_CHART_VERSION
-The [[https://github.com/bitnami/charts/blob/master/bitnami/postgresql/Chart.yaml][version number of the chart to install postgresql]]:
-    #+name: FUNKWHALE_REDIS_CHART_VERSION
-    #+begin_src config :noweb yes :eval no
-    12.1.1
-    #+end_src
-*** FUNKWHALE_REDIS_PVC_SIZE
-    #+name: FUNKWHALE_REDIS_PVC_SIZE
-    #+begin_src config :noweb yes :eval no
-    10Gi
+    0.3.6
     #+end_src
 ** Funkwhale Deployment
-*** Add Bitnami Helm chart repository to Flux:
+*** Add Helm chart repositories to Flux:
     #+begin_src shell :noweb yes :eval never-export :exports code :results none
     flux create source helm bitnami \
     --url=https://charts.bitnami.com/bitnami \
     --interval=12h --export > <<SRC_DIR>>/funkwhale/helm.sources.yaml
+    flux create source helm ananace \
+    --url=https://ananace.gitlab.io/charts \
+    --interval=12h --export >> <<SRC_DIR>>/funkwhale/helm.sources.yaml
     #+end_src
 *** Update Helm releases
     #+begin_src shell :noweb yes :eval never-export :exports code :results none
-    flux create helmrelease postgresql \
+    flux create helmrelease funkwhale \
       --interval=5m \
-      --source=HelmRepository/bitnami \
-      --chart=postgresql \
+      --source=HelmRepository/ananace \
+      --chart=funkwhale \
       --target-namespace=funkwhale \
-      --values=funkwhale/postgresql.values.yaml \
-      --chart-version="<<FUNKWHALE_POSTGRESQL_CHART_VERSION>>" \
-      --export > <<SRC_DIR>>/funkwhale/postgresql.release.yaml
-
-    flux create helmrelease redis \
-      --interval=5m \
-      --source=HelmRepository/bitnami \
-      --chart=redis \
-      --target-namespace=funkwhale \
-      --values=funkwhale/redis.values.yaml \
-      --chart-version="<<FUNKWHALE_REDIS_CHART_VERSION>>" \
-      --export > <<SRC_DIR>>/funkwhale/redis.release.yaml
+      --values=funkwhale/helm.values.yaml \
+      --chart-version="<<FUNKWHALE_HELM_CHART_VERSION>>" \
+      --export > funkwhale/helm.release.yaml
     #+end_src
 
 *** Commit and push manifests to git repository
@@ -358,6 +333,7 @@ The [[https://github.com/bitnami/charts/blob/master/bitnami/postgresql/Chart.yam
   resources:
   - namespace.yaml
   - helm.sources.yaml
+  - helm.release.yaml
   #+end_src
 *** funkwhale/namespace.yaml
   #+begin_src yaml :noweb yes :eval no :tangle funkwhale/namespace.yaml
@@ -367,20 +343,18 @@ The [[https://github.com/bitnami/charts/blob/master/bitnami/postgresql/Chart.yam
     name: funkwhale
   #+end_src
 
-*** funkwhale/postgresql.values.yaml
-    #+begin_src yaml :noweb yes :eval no :tangle funkwhale/postgresql.values.yaml
-    postgresqlDatabase: funkwhale
-    postgresqlUsername: funkwhale
-    persistence:
-      size: <<FUNKWHALE_POSTGRESQL_PVC_SIZE>>
-    #+end_src
-*** funkwhale/redis.values.yaml
-    #+begin_src yaml :noweb yes :eval no :tangle funkwhale/redis.values.yaml
-    master:
-      persistence:
-        size: <<FUNKWHALE_REDIS_PVC_SIZE>>
-    cluster:
-      enabled: false
+*** funkwhale/helm.values.yaml
+    #+begin_src yaml :noweb yes :eval no :tangle funkwhale/helm.values.yaml
+    ingress:
+      enabled: true
+      hosts:
+      - host: <<FUNKWHALE_DOMAIN>>
+        serviceName: funkwhale
+        servicePort: 80
+        path: /
+      annotations:
+        kubernetes.io/ingress.class: traefik
+        traefik.ingress.kubernetes.io/router.tls.certresolver: default
     #+end_src
 * LICENSE
 #+INCLUDE: "~/git/vendor/enigmacurry/literate-k3s/LICENSE.org"

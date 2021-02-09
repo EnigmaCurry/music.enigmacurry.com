@@ -1,5 +1,0 @@
-master:
-  persistence:
-    size: 10Gi
-cluster:
-  enabled: false
