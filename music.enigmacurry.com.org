@@ -328,6 +328,13 @@ The [[https://github.com/bitnami/charts/blob/master/bitnami/postgresql/Chart.yam
     #+end_src
 
     #+RESULTS:
+    | NAME                                             | READY     | STATUS       | RESTARTS    | AGE      |     |
+    | pod/funkwhale-postgresql-postgresql-0            | 1/1       | Running      | 0           | 67s      |     |
+    | NAME                                             | TYPE      | CLUSTER-IP   | EXTERNAL-IP | PORT(S)  | AGE |
+    | service/funkwhale-postgresql-headless            | ClusterIP | None         | <none>      | 5432/TCP | 68s |
+    | service/funkwhale-postgresql                     | ClusterIP | 10.43.130.16 | <none>      | 5432/TCP | 68s |
+    | NAME                                             | READY     | AGE          |             |          |     |
+    | statefulset.apps/funkwhale-postgresql-postgresql | 1/1       | 68s          |             |          |     |
     
     Check that volumes are bound via =local-path= :
     #+begin_src shell :noweb yes :eval never-export :exports code
@@ -335,6 +342,8 @@ The [[https://github.com/bitnami/charts/blob/master/bitnami/postgresql/Chart.yam
     #+end_src
 
     #+RESULTS:
+    | NAME                                   | STATUS | VOLUME                                   | CAPACITY | ACCESS | MODES      | STORAGECLASS | AGE |
+    | data-funkwhale-postgresql-postgresql-0 | Bound  | pvc-ce5d22f1-2138-4d92-9af4-d8a082ffe4fe | 8Gi      | RWO    | local-path | 74s          |     |
 
 
 *** funkwhale/kustomization.yaml

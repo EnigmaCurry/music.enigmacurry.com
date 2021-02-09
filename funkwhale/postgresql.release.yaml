@@ -15,7 +15,8 @@ spec:
   interval: 5m0s
   targetNamespace: funkwhale
   values:
-    persistence.size: 10Gi
+    persistence:
+      size: 10Gi
     postgresqlDatabase: funkwhale
     postgresqlUsername: funkwhale
 
