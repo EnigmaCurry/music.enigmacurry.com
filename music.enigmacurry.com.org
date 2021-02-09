@@ -318,8 +318,8 @@ Follow the deployment instructions in the Flux library INCLUDE:
     #+end_src
 
     #+RESULTS:
-    : NAME        READY   STATUS                             AGE
-    : funkwhale   True    Release reconciliation succeeded   12m
+    : NAME        READY   STATUS                                                     AGE
+    : funkwhale   False   Helm upgrade failed: timed out waiting for the condition   19m
 
     Wait a bit for Flux to deploy, then check the status of services:
     #+begin_src shell :noweb yes :eval never-export :exports code
