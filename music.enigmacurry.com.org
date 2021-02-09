@@ -276,7 +276,7 @@ Follow the deployment instructions in the Flux library INCLUDE:
 The [[https://github.com/bitnami/charts/blob/master/bitnami/postgresql/Chart.yaml][version number of the chart to install postgresql]]:
     #+name: FUNKWHALE_POSTGRESQL_CHART_VERSION
     #+begin_src config :noweb yes :eval no
-    10.2.7
+    10.1.1
     #+end_src
 ** Funkwhale Deployment
 *** Add Bitnami Helm chart repository to Flux:
