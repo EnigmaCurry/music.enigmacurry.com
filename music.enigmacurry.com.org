@@ -326,11 +326,15 @@ The [[https://github.com/bitnami/charts/blob/master/bitnami/postgresql/Chart.yam
     #+begin_src shell :noweb yes :eval never-export :exports code
     <<kubectl>> -n funkwhale get all
     #+end_src
+
+    #+RESULTS:
     
     Check that volumes are bound via =local-path= :
     #+begin_src shell :noweb yes :eval never-export :exports code
     <<kubectl>> -n funkwhale get pvc
     #+end_src
+
+    #+RESULTS:
 
 
 *** funkwhale/kustomization.yaml
