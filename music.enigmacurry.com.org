@@ -336,28 +336,20 @@ The [[https://github.com/bitnami/charts/blob/master/bitnami/postgresql/Chart.yam
     
     Now flux will apply the manifests for you..
 *** Check services:
+    Check the status of each of the helm releases:
+    #+begin_src shell :noweb yes :eval never-export :exports code
+    <<kubectl>> -n flux-system get helmreleases.helm.toolkit.fluxcd.io
+    #+end_src
+
     Wait a bit for Flux to deploy, then check the status of services:
     #+begin_src shell :noweb yes :eval never-export :exports code
     <<kubectl>> -n funkwhale get all
     #+end_src
-
-    #+RESULTS:
-    | NAME                                             | READY     | STATUS       | RESTARTS    | AGE      |     |
-    | pod/funkwhale-postgresql-postgresql-0            | 1/1       | Running      | 0           | 49m      |     |
-    | NAME                                             | TYPE      | CLUSTER-IP   | EXTERNAL-IP | PORT(S)  | AGE |
-    | service/funkwhale-postgresql-headless            | ClusterIP | None         | <none>      | 5432/TCP | 49m |
-    | service/funkwhale-postgresql                     | ClusterIP | 10.43.19.196 | <none>      | 5432/TCP | 49m |
-    | NAME                                             | READY     | AGE          |             |          |     |
-    | statefulset.apps/funkwhale-postgresql-postgresql | 1/1       | 49m          |             |          |     |
     
     Check that volumes are bound via =local-path= :
     #+begin_src shell :noweb yes :eval never-export :exports code
     <<kubectl>> -n funkwhale get pvc
     #+end_src
-
-    #+RESULTS:
-    | NAME                                   | STATUS | VOLUME                                   | CAPACITY | ACCESS | MODES      | STORAGECLASS | AGE |
-    | data-funkwhale-postgresql-postgresql-0 | Bound  | pvc-41dcf17e-e41a-4ade-8974-4143a565a7c4 | 10Gi     | RWO    | local-path | 48m          |     |
 
     Check the helm controller log for important notes about how to access the
     database via =psql=:
@@ -394,6 +386,8 @@ The [[https://github.com/bitnami/charts/blob/master/bitnami/postgresql/Chart.yam
     master:
       persistence:
         size: <<FUNKWHALE_REDIS_PVC_SIZE>>
+    cluster:
+      enabled: false
     #+end_src
 * LICENSE
 #+INCLUDE: "~/git/vendor/enigmacurry/literate-k3s/LICENSE.org"
