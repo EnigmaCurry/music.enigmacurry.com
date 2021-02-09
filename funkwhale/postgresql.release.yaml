@@ -3,7 +3,7 @@ apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
   name: postgresql
-  namespace: funkwhale
+  namespace: flux-system
 spec:
   chart:
     spec:
@@ -13,4 +13,5 @@ spec:
         name: bitnami
       version: 10.1.1
   interval: 5m0s
+  targetNamespace: funkwhale
 
