@@ -218,6 +218,7 @@ Follow the deployment instructions in the Sealed Secrets library INCLUDE:
 #+END_COMMENT
 #+INCLUDE: "~/git/vendor/enigmacurry/literate-k3s/lib/sealed_secrets.org"
 * flux-system
+
 This installation assumes you already have a remote git repository host that you
 trust (probably a third party service like GitLab or GitHub), and that you have
 no need to switch to [[https://gitea.io/][Gitea]], which is a self-hosted, low-resource, cluster-local,
@@ -312,19 +313,41 @@ Follow the deployment instructions in the Flux library INCLUDE:
     
     Now flux will apply the manifests for you..
 *** Check services:
-    Check the status of each of the helm releases:
+    Check the status of the helm release:
     #+begin_src shell :noweb yes :eval never-export :exports code :results output
     <<kubectl>> -n flux-system get helmreleases.helm.toolkit.fluxcd.io
+    <<kubectl>> -n funkwhale get all
     #+end_src
 
     #+RESULTS:
-    : NAME        READY   STATUS                                                     AGE
-    : funkwhale   False   Helm upgrade failed: timed out waiting for the condition   19m
+    #+begin_example
+    NAME        READY     STATUS                       AGE
+    funkwhale   Unknown   Reconciliation in progress   4m50s
+    NAME                                              READY   STATUS    RESTARTS   AGE
+    pod/funkwhale-funkwhale-worker-5797c7c658-2z5k2   0/1     Pending   0          4m48s
+    pod/funkwhale-funkwhale-5dfd4c9d64-kdpdl          0/2     Pending   0          4m48s
+    pod/funkwhale-funkwhale-worker-5797c7c658-4xmbg   0/1     Pending   0          4m48s
+    pod/funkwhale-funkwhale-beat-696b558c8d-kcjqz     1/1     Running   0          4m48s
+    pod/funkwhale-funkwhale-redis-master-0            1/1     Running   0          4m48s
 
-    Wait a bit for Flux to deploy, then check the status of services:
-    #+begin_src shell :noweb yes :eval never-export :exports code
-    <<kubectl>> -n funkwhale get all
-    #+end_src
+    NAME                                         TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+    service/funkwhale-funkwhale-redis-headless   ClusterIP   None            <none>        6379/TCP   4m49s
+    service/funkwhale-funkwhale-redis-master     ClusterIP   10.43.208.71    <none>        6379/TCP   4m49s
+    service/funkwhale-funkwhale                  ClusterIP   10.43.208.197   <none>        80/TCP     4m49s
+
+    NAME                                         READY   UP-TO-DATE   AVAILABLE   AGE
+    deployment.apps/funkwhale-funkwhale          0/1     1            0           4m49s
+    deployment.apps/funkwhale-funkwhale-worker   0/2     2            0           4m49s
+    deployment.apps/funkwhale-funkwhale-beat     1/1     1            1           4m49s
+
+    NAME                                                    DESIRED   CURRENT   READY   AGE
+    replicaset.apps/funkwhale-funkwhale-5dfd4c9d64          1         1         0       4m49s
+    replicaset.apps/funkwhale-funkwhale-worker-5797c7c658   2         2         0       4m49s
+    replicaset.apps/funkwhale-funkwhale-beat-696b558c8d     1         1         1       4m49s
+
+    NAME                                                READY   AGE
+    statefulset.apps/funkwhale-funkwhale-redis-master   1/1     4m49s
+    #+end_example
     
     Check that volumes are bound via =local-path= :
     #+begin_src shell :noweb yes :eval never-export :exports code
@@ -332,6 +355,8 @@ Follow the deployment instructions in the Flux library INCLUDE:
     #+end_src
 
     #+RESULTS:
+    | NAME                | STATUS  | VOLUME     | CAPACITY | ACCESS | MODES | STORAGECLASS | AGE |
+    | funkwhale-funkwhale | Pending | local-path | 25m      |        |       |              |     |
 
 *** funkwhale/kustomization.yaml
   #+begin_src yaml :noweb yes :eval no :tangle funkwhale/kustomization.yaml
