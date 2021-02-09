@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2021-02-09 Tue 11:18 -->
+<!-- 2021-02-09 Tue 11:25 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>music.enigmacurry.com</title>
@@ -403,9 +403,10 @@ for the JavaScript code in this tag.
 <li><a href="#Introduction%20to%20Rook">6.2.1. Introduction to Rook</a></li>
 <li><a href="#Prepare%20Host%20Nodes">6.2.2. Prepare Host Nodes</a></li>
 <li><a href="#Check%20services">6.2.3. Check services</a></li>
-<li><a href="#rook-nfs-system%2Fpvc.yaml">6.2.4. rook-nfs-system/pvc.yaml</a></li>
-<li><a href="#rook-nfs-system%2Fnfs.yaml">6.2.5. rook-nfs-system/nfs.yaml</a></li>
-<li><a href="#rook-nfs-system%2Fkustomization.yaml">6.2.6. rook-nfs-system/kustomization.yaml</a></li>
+<li><a href="#rook-nfs%2Fpvc.yaml">6.2.4. rook-nfs/pvc.yaml</a></li>
+<li><a href="#rook-nfs%2Fnfs.yaml">6.2.5. rook-nfs/nfs.yaml</a></li>
+<li><a href="#rook-nfs%2Fkustomization.yaml">6.2.6. rook-nfs/kustomization.yaml</a></li>
+<li><a href="#rook-nfs-system%2Fkustomization.yaml">6.2.7. rook-nfs-system/kustomization.yaml</a></li>
 </ul>
 </li>
 </ul>
@@ -474,6 +475,7 @@ mkdir -p /home/ryan/git/clusters/music.enigmacurry.com/kube-system/traefik/
 mkdir -p /home/ryan/git/clusters/music.enigmacurry.com/flux-system/
 mkdir -p /home/ryan/git/clusters/music.enigmacurry.com/funkwhale/
 mkdir -p /home/ryan/git/clusters/music.enigmacurry.com/rook-nfs-system/
+mkdir -p /home/ryan/git/clusters/music.enigmacurry.com/rook-nfs/
 </pre>
 </div>
 
@@ -537,7 +539,7 @@ This is the source URL for this document, used in the <a href="#Getting%20Starte
 above.
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="orgfc520b7">https://raw.githubusercontent.com/EnigmaCurry/literate-k3s/master/clusters/music.enigmacurry.com/music.enigmacurry.com.org
+<pre class="src src-config" id="orgeff3adc">https://raw.githubusercontent.com/EnigmaCurry/literate-k3s/master/clusters/music.enigmacurry.com/music.enigmacurry.com.org
 </pre>
 </div>
 </div>
@@ -549,7 +551,7 @@ above.
 Set <code>CLUSTER</code> to be the domain name for your cluster:
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org045b9f8">music.enigmacurry.com
+<pre class="src src-config" id="org2daa544">music.enigmacurry.com
 </pre>
 </div>
 </div>
@@ -562,7 +564,7 @@ Set <code>CLUSTER_SSH_USER</code> to be the admin SSH account of the cluster (us
 root).
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org38b2637">root
+<pre class="src src-config" id="org9505b57">root
 </pre>
 </div>
 </div>
@@ -574,7 +576,7 @@ root).
 <code>KUBE_CONFIG</code> is the local path to the kubectl config file
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org283cd8a">${HOME}/.kube/music.enigmacurry.com-config
+<pre class="src src-config" id="org46b4d19">${HOME}/.kube/music.enigmacurry.com-config
 </pre>
 </div>
 </div>
@@ -588,7 +590,7 @@ Since you'll need to specify the kubectl config file each and every time you use
 code blocks.
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org7bd25ef">kubectl --kubeconfig=${HOME}/.kube/music.enigmacurry.com-config
+<pre class="src src-config" id="org60cfa67">kubectl --kubeconfig=${HOME}/.kube/music.enigmacurry.com-config
 </pre>
 </div>
 </div>
@@ -695,7 +697,7 @@ Edit the variables for the Traefik config:
 provider. 
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org3d07265">letsencrypt@enigmacurry.com
+<pre class="src src-config" id="orgc960c55">letsencrypt@enigmacurry.com
 </pre>
 </div>
 </div>
@@ -711,7 +713,7 @@ valid certificates in web browsers).
 </p>
 
 <div class="org-src-container">
-<pre class="src src-config" id="org8ffdaee">https://acme-staging-v02.api.letsencrypt.org/directory
+<pre class="src src-config" id="org7a47484">https://acme-staging-v02.api.letsencrypt.org/directory
 </pre>
 </div>
 </div>
@@ -726,7 +728,7 @@ domain name to respond to. <code>TRAEFIK_WHOAMI_DOMAIN</code> is the subdomain t
 whoami service responds to.
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="orgd1d426c">whoami.music.enigmacurry.com
+<pre class="src src-config" id="orgb30cfdc">whoami.music.enigmacurry.com
 </pre>
 </div>
 </div>
@@ -738,7 +740,7 @@ whoami service responds to.
 The version number of Traefik to install (eg. <code>2.3</code>).
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org82cb6b6">v2.3
+<pre class="src src-config" id="org6b2f267">v2.3
 </pre>
 </div>
 </div>
@@ -750,7 +752,7 @@ The version number of Traefik to install (eg. <code>2.3</code>).
 <code>TRAEFIK_LOG_LEVEL</code> is the filter level on the traefik log.
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="orgcc18cb3">INFO
+<pre class="src src-config" id="org63cc5c8">INFO
 </pre>
 </div>
 </div>
@@ -767,7 +769,7 @@ The version number of Traefik to install (eg. <code>2.3</code>).
 Choose the <a href="https://github.com/bitnami-labs/sealed-secrets/releases">release version for Sealed Secrets</a>
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org11d8854">v0.14.1
+<pre class="src src-config" id="orga9fce41">v0.14.1
 </pre>
 </div>
 </div>
@@ -842,7 +844,7 @@ Test with TLS verification on:
 </div>
 
 <p>
-TLS will not verify until you use the production <a href="#org8ffdaee">TRAEFIK_ACME_SERVER</a>.
+TLS will not verify until you use the production <a href="#org7a47484">TRAEFIK_ACME_SERVER</a>.
 </p>
 </div>
 </div>
@@ -1180,7 +1182,7 @@ to direct traffic to any other node.
 <div class="outline-text-4" id="text-4-3-8">
 <p>
 <a href="https://github.com/traefik/whoami">traefik/whoami</a> can be deployed to test Traefik functionality. It listens to the
-domain <a href="#orgd1d426c">TRAEFIK_WHOAMI_DOMAIN</a> (eg. <code>whoami.k3s.example.com</code>).
+domain <a href="#orgb30cfdc">TRAEFIK_WHOAMI_DOMAIN</a> (eg. <code>whoami.k3s.example.com</code>).
 </p>
 
 <div class="org-src-container">
@@ -1323,7 +1325,7 @@ The name of the git repository containing these org files, and from which flux
 reads. Usually it's the same as <code>CLUSTER</code>.
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org8c08e5c">music.enigmacurry.com
+<pre class="src src-config" id="orgae97d4e">music.enigmacurry.com
 </pre>
 </div>
 </div>
@@ -1335,7 +1337,7 @@ reads. Usually it's the same as <code>CLUSTER</code>.
 The name of the owner of the git repository.
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org711fb93">EnigmaCurry
+<pre class="src src-config" id="org83ea837">EnigmaCurry
 </pre>
 </div>
 </div>
@@ -1347,7 +1349,7 @@ The name of the owner of the git repository.
 The Hostname and Port number of the git repository remote URL:
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org637e8d7">github.com:22
+<pre class="src src-config" id="org91ca4db">github.com:22
 </pre>
 </div>
 </div>
@@ -1363,7 +1365,7 @@ organization name. (This might work with other URL forms, like HTTPS, but this
 is the only one that's been tested:)
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="orgf6c634c">ssh://git@github.com:22/EnigmaCurry/music.enigmacurry.com.git
+<pre class="src src-config" id="org0c33291">ssh://git@github.com:22/EnigmaCurry/music.enigmacurry.com.git
 </pre>
 </div>
 </div>
@@ -1430,7 +1432,7 @@ with its state.
 
 <p>
 If using Gitea, click the <code>+</code> icon in the upper right corner to create a <code>New
-Repository</code>. Call the new repository the same as <a href="#org8c08e5c">FLUX_REPO_NAME</a>.
+Repository</code>. Call the new repository the same as <a href="#orgae97d4e">FLUX_REPO_NAME</a>.
 </p>
 
 <p>
@@ -1664,7 +1666,7 @@ And in another minute or so, the namespace should be gone:
 The size of root Rook volume (contains ALL other rook volumes)
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org84da739">50Gi
+<pre class="src src-config" id="orgfc00cd5">50Gi
 </pre>
 </div>
 </div>
@@ -1676,7 +1678,7 @@ The size of root Rook volume (contains ALL other rook volumes)
 Use the latest version from <a href="https://github.com/rook/rook/releases">https://github.com/rook/rook/releases</a>
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="orge17c781">v1.5.6
+<pre class="src src-config" id="orga55ab25">v1.5.6
 </pre>
 </div>
 </div>
@@ -1785,15 +1787,15 @@ services:
 </div>
 </div>
 
-<div id="outline-container-rook-nfs-system%2Fpvc.yaml" class="outline-4">
-<h4 id="rook-nfs-system%2Fpvc.yaml"><span class="section-number-4">6.2.4</span> rook-nfs-system/pvc.yaml</h4>
+<div id="outline-container-rook-nfs%2Fpvc.yaml" class="outline-4">
+<h4 id="rook-nfs%2Fpvc.yaml"><span class="section-number-4">6.2.4</span> rook-nfs/pvc.yaml</h4>
 <div class="outline-text-4" id="text-6-2-4">
 <div class="org-src-container">
 <pre class="src src-yaml"><span style="color: #7590db;">apiVersion</span>: v1
 <span style="color: #7590db;">kind</span>: PersistentVolumeClaim
 <span style="color: #7590db;">metadata</span>:
   <span style="color: #7590db;">name</span>: nfs-default-claim
-  <span style="color: #7590db;">namespace</span>: rook-nfs-system
+  <span style="color: #7590db;">namespace</span>: rook-nfs
 <span style="color: #7590db;">spec</span>:
   <span style="color: #7590db;">accessModes</span>:
   - ReadWriteOnce
@@ -1804,15 +1806,15 @@ services:
 </div>
 </div>
 </div>
-<div id="outline-container-rook-nfs-system%2Fnfs.yaml" class="outline-4">
-<h4 id="rook-nfs-system%2Fnfs.yaml"><span class="section-number-4">6.2.5</span> rook-nfs-system/nfs.yaml</h4>
+<div id="outline-container-rook-nfs%2Fnfs.yaml" class="outline-4">
+<h4 id="rook-nfs%2Fnfs.yaml"><span class="section-number-4">6.2.5</span> rook-nfs/nfs.yaml</h4>
 <div class="outline-text-4" id="text-6-2-5">
 <div class="org-src-container">
 <pre class="src src-yaml"><span style="color: #7590db;">apiVersion</span>: nfs.rook.io/v1alpha1
 <span style="color: #7590db;">kind</span>: NFSServer
 <span style="color: #7590db;">metadata</span>:
   <span style="color: #7590db;">name</span>: rook-nfs
-  <span style="color: #7590db;">namespace</span>: rook-nfs-system
+  <span style="color: #7590db;">namespace</span>: rook-nfs
 <span style="color: #7590db;">spec</span>:
   <span style="color: #7590db;">replicas</span>: 1
   <span style="color: #7590db;">exports</span>:
@@ -1828,9 +1830,22 @@ services:
 </div>
 </div>
 </div>
-<div id="outline-container-rook-nfs-system%2Fkustomization.yaml" class="outline-4">
-<h4 id="rook-nfs-system%2Fkustomization.yaml"><span class="section-number-4">6.2.6</span> rook-nfs-system/kustomization.yaml</h4>
+<div id="outline-container-rook-nfs%2Fkustomization.yaml" class="outline-4">
+<h4 id="rook-nfs%2Fkustomization.yaml"><span class="section-number-4">6.2.6</span> rook-nfs/kustomization.yaml</h4>
 <div class="outline-text-4" id="text-6-2-6">
+<div class="org-src-container">
+<pre class="src src-yaml"><span style="color: #7590db;">apiVersion</span>: kustomize.config.k8s.io/v1beta1
+<span style="color: #7590db;">kind</span>: Kustomization
+<span style="color: #7590db;">resources</span>:
+- pvc.yaml
+- nfs-server.yaml
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-rook-nfs-system%2Fkustomization.yaml" class="outline-4">
+<h4 id="rook-nfs-system%2Fkustomization.yaml"><span class="section-number-4">6.2.7</span> rook-nfs-system/kustomization.yaml</h4>
+<div class="outline-text-4" id="text-6-2-7">
 <div class="org-src-container">
 <pre class="src src-yaml"><span style="color: #7590db;">apiVersion</span>: kustomize.config.k8s.io/v1beta1
 <span style="color: #7590db;">kind</span>: Kustomization
@@ -1859,7 +1874,7 @@ services:
 Funkwhale will respond on the main cluster domain:
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org1312e3a">music.enigmacurry.com
+<pre class="src src-config" id="org74d2ee3">music.enigmacurry.com
 </pre>
 </div>
 </div>
@@ -2076,7 +2091,7 @@ well, so I instead opted to copy them here.
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: EnigmaCurry</p>
-<p class="date">Created: 2021-02-09 Tue 11:18</p>
+<p class="date">Created: 2021-02-09 Tue 11:25</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

@@ -2,7 +2,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: nfs-default-claim
-  namespace: rook-nfs-system
+  namespace: rook-nfs
 spec:
   accessModes:
   - ReadWriteOnce
