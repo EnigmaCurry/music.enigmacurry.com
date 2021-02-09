@@ -268,6 +268,7 @@ Follow the deployment instructions in the Flux library INCLUDE:
 * Funkwhale
 ** Funkwhale Config
 *** FUNKWHALE_DOMAIN
+    Funkwhale will respond on the main cluster domain:
     #+name: FUNKWHALE_DOMAIN
     #+begin_src config :noweb yes :eval no
     <<CLUSTER>>
@@ -278,6 +279,12 @@ The [[https://github.com/bitnami/charts/blob/master/bitnami/postgresql/Chart.yam
     #+begin_src config :noweb yes :eval no
     10.1.1
     #+end_src
+*** FUNKWHALE_POSTGRESQL_PVC_SIZE
+    Size of data volume for Funkwhale's postgresql:
+    #+name: FUNKWHALE_POSTGRESQL_PVC_SIZE
+    #+begin_src config :noweb yes :eval no
+    10Gi
+    #+end_src
 ** Funkwhale Deployment
 *** Add Bitnami Helm chart repository to Flux:
     #+begin_src shell :noweb yes :eval never-export :exports code :results none
@@ -287,6 +294,9 @@ The [[https://github.com/bitnami/charts/blob/master/bitnami/postgresql/Chart.yam
     #+end_src
 *** Configure postgresql Helm values
     #+begin_src yaml :noweb yes :eval no :tangle funkwhale/postgresql.values.yaml
+    postgresqlDatabase: funkwhale
+    postgresqlUsername: funkwhale
+    persistence.size: <<FUNKWHALE_POSTGRESQL_PVC_SIZE>>
     #+end_src
 *** Create postgresql Helm release
     #+begin_src shell :noweb yes :eval never-export :exports code :results none
