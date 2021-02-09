@@ -288,7 +288,7 @@ The [[https://github.com/bitnami/charts/blob/master/bitnami/postgresql/Chart.yam
 *** Create postgresql Helm release
     #+begin_src shell :noweb yes :eval never-export :exports code
     flux create helmrelease postgresql \
-      --interval=12h \
+      --interval=5m \
       --source=HelmRepository/bitnami \
       --chart=postgresql \
       --namespace=funkwhale \
