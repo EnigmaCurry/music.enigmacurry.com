@@ -351,11 +351,6 @@ The [[https://github.com/bitnami/charts/blob/master/bitnami/postgresql/Chart.yam
     <<kubectl>> -n funkwhale get pvc
     #+end_src
 
-    Check the helm controller log for important notes about how to access the
-    database via =psql=:
-    #+begin_src shell :noweb yes :eval never-export :exports code
-    <<kubectl>> -n flux-system logs 
-    #+end_src
 *** funkwhale/kustomization.yaml
   #+begin_src yaml :noweb yes :eval no :tangle funkwhale/kustomization.yaml
   apiVersion: kustomize.config.k8s.io/v1beta1
@@ -363,8 +358,6 @@ The [[https://github.com/bitnami/charts/blob/master/bitnami/postgresql/Chart.yam
   resources:
   - namespace.yaml
   - helm.sources.yaml
-  - postgresql.release.yaml
-  - redis.release.yaml
   #+end_src
 *** funkwhale/namespace.yaml
   #+begin_src yaml :noweb yes :eval no :tangle funkwhale/namespace.yaml
