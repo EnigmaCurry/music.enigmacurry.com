@@ -280,23 +280,25 @@ The [[https://github.com/bitnami/charts/blob/master/bitnami/postgresql/Chart.yam
     #+end_src
 ** Funkwhale Deployment
 *** Add Bitnami Helm chart repository to Flux:
-    #+begin_src shell :noweb yes :eval never-export :exports code
+    #+begin_src shell :noweb yes :eval never-export :exports code :results none
     flux create source helm bitnami \
     --url=https://charts.bitnami.com/bitnami \
     --interval=12h --export > <<SRC_DIR>>/funkwhale/helm.sources.yaml
     #+end_src
+*** Configure postgresql Helm values
+    #+begin_src yaml :noweb yes :eval no :tangle funkwhale/postgresql.values.yaml
+    #+end_src
 *** Create postgresql Helm release
-    #+begin_src shell :noweb yes :eval never-export :exports code
+    #+begin_src shell :noweb yes :eval never-export :exports code :results none
     flux create helmrelease postgresql \
       --interval=5m \
       --source=HelmRepository/bitnami \
       --chart=postgresql \
       --target-namespace=funkwhale \
+      --values=funkwhale/postgresql.values.yaml \
       --chart-version="<<FUNKWHALE_POSTGRESQL_CHART_VERSION>>" \
       --export > <<SRC_DIR>>/funkwhale/postgresql.release.yaml
     #+end_src
-
-    #+RESULTS:
 
 *** Commit and push manifests to git repository
     #+begin_src shell :noweb yes :eval never-export :exports code
@@ -314,8 +316,12 @@ The [[https://github.com/bitnami/charts/blob/master/bitnami/postgresql/Chart.yam
     #+begin_src shell :noweb yes :eval never-export :exports code
     <<kubectl>> -n funkwhale get all
     #+end_src
+    
+    Check that volumes are bound via =local-path= :
+    #+begin_src shell :noweb yes :eval never-export :exports code
+    <<kubectl>> -n funkwhale get pvc
+    #+end_src
 
-    #+RESULTS:
 
 *** funkwhale/kustomization.yaml
   #+begin_src yaml :noweb yes :eval no :tangle funkwhale/kustomization.yaml
