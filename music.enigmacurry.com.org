@@ -290,7 +290,7 @@ The [[https://github.com/bitnami/charts/blob/master/bitnami/postgresql/Chart.yam
     flux create helmrelease postgresql \
       --interval=12h \
       --source=HelmRepository/bitnami \
-      --chart=bitnami/postgresql \
+      --chart=postgresql \
       --namespace=funkwhale \
       --chart-version="<<FUNKWHALE_POSTGRESQL_CHART_VERSION>>" \
       --export > <<SRC_DIR>>/funkwhale/postgresql.release.yaml
