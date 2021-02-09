@@ -279,6 +279,7 @@ Follow the deployment instructions in the Flux library INCLUDE:
     #+end_src
 ** Funkwhale Deployment
 *** Add Helm chart repositories to Flux:
+    A [[https://gitlab.com/ananace/charts/-/tree/master/charts/funkwhale][very nice person packaged a funkwhale helm chart]]:
     #+begin_src shell :noweb yes :eval never-export :exports code :results none
     flux create source helm bitnami \
     --url=https://charts.bitnami.com/bitnami \
@@ -312,9 +313,13 @@ Follow the deployment instructions in the Flux library INCLUDE:
     Now flux will apply the manifests for you..
 *** Check services:
     Check the status of each of the helm releases:
-    #+begin_src shell :noweb yes :eval never-export :exports code
+    #+begin_src shell :noweb yes :eval never-export :exports code :results output
     <<kubectl>> -n flux-system get helmreleases.helm.toolkit.fluxcd.io
     #+end_src
+
+    #+RESULTS:
+    : NAME        READY   STATUS                                                                                                                                                                                  AGE
+    : funkwhale   False   Helm install failed: unable to build kubernetes objects from release manifest: error validating "": error validating data: unknown object type "nil" in Secret.data.DJANGO_SECRET_KEY   101s
 
     Wait a bit for Flux to deploy, then check the status of services:
     #+begin_src shell :noweb yes :eval never-export :exports code
@@ -345,6 +350,7 @@ Follow the deployment instructions in the Flux library INCLUDE:
 
 *** funkwhale/helm.values.yaml
     #+begin_src yaml :noweb yes :eval no :tangle funkwhale/helm.values.yaml
+    djangoSecret: insecure-secret
     ingress:
       enabled: true
       hosts:

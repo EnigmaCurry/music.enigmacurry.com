@@ -1,3 +1,4 @@
+djangoSecret: insecure-secret
 ingress:
   enabled: true
   hosts:
