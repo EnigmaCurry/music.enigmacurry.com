@@ -28,4 +28,5 @@ spec:
     persistence:
       enabled: true
       size: 25Gi
+      storageClass: rook-nfs-share1
 

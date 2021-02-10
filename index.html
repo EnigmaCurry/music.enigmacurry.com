@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2021-02-09 Tue 16:28 -->
+<!-- 2021-02-09 Tue 16:31 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>music.enigmacurry.com</title>
@@ -539,7 +539,7 @@ This is the source URL for this document, used in the <a href="#Getting%20Starte
 above.
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="orgd8e2c33">https://raw.githubusercontent.com/EnigmaCurry/literate-k3s/master/clusters/music.enigmacurry.com/music.enigmacurry.com.org
+<pre class="src src-config" id="orgc6841a6">https://raw.githubusercontent.com/EnigmaCurry/literate-k3s/master/clusters/music.enigmacurry.com/music.enigmacurry.com.org
 </pre>
 </div>
 </div>
@@ -551,7 +551,7 @@ above.
 Set <code>CLUSTER</code> to be the domain name for your cluster:
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="orge1d9498">music.enigmacurry.com
+<pre class="src src-config" id="org642f5a8">music.enigmacurry.com
 </pre>
 </div>
 </div>
@@ -564,7 +564,7 @@ Set <code>CLUSTER_SSH_USER</code> to be the admin SSH account of the cluster (us
 root).
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="orge552174">root
+<pre class="src src-config" id="orge4be106">root
 </pre>
 </div>
 </div>
@@ -576,7 +576,7 @@ root).
 <code>KUBE_CONFIG</code> is the local path to the kubectl config file
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="orga6c8f7f">${HOME}/.kube/music.enigmacurry.com-config
+<pre class="src src-config" id="orga630ab7">${HOME}/.kube/music.enigmacurry.com-config
 </pre>
 </div>
 </div>
@@ -590,7 +590,7 @@ Since you'll need to specify the kubectl config file each and every time you use
 code blocks.
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org584ca9f">kubectl --kubeconfig=${HOME}/.kube/music.enigmacurry.com-config
+<pre class="src src-config" id="org3a426a5">kubectl --kubeconfig=${HOME}/.kube/music.enigmacurry.com-config
 </pre>
 </div>
 </div>
@@ -697,7 +697,7 @@ Edit the variables for the Traefik config:
 provider. 
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="orge08a7fb">letsencrypt@enigmacurry.com
+<pre class="src src-config" id="orgb6af127">letsencrypt@enigmacurry.com
 </pre>
 </div>
 </div>
@@ -713,7 +713,7 @@ valid certificates in web browsers).
 </p>
 
 <div class="org-src-container">
-<pre class="src src-config" id="org43536dd">https://acme-staging-v02.api.letsencrypt.org/directory
+<pre class="src src-config" id="orgc68362f">https://acme-staging-v02.api.letsencrypt.org/directory
 </pre>
 </div>
 </div>
@@ -728,7 +728,7 @@ domain name to respond to. <code>TRAEFIK_WHOAMI_DOMAIN</code> is the subdomain t
 whoami service responds to.
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="orgdd6493c">whoami.music.enigmacurry.com
+<pre class="src src-config" id="org64b5240">whoami.music.enigmacurry.com
 </pre>
 </div>
 </div>
@@ -740,7 +740,7 @@ whoami service responds to.
 The version number of Traefik to install (eg. <code>2.3</code>).
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org988d5f2">v2.3
+<pre class="src src-config" id="org2b9b58a">v2.3
 </pre>
 </div>
 </div>
@@ -752,7 +752,7 @@ The version number of Traefik to install (eg. <code>2.3</code>).
 <code>TRAEFIK_LOG_LEVEL</code> is the filter level on the traefik log.
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="orgd0837c0">INFO
+<pre class="src src-config" id="org8e87b06">INFO
 </pre>
 </div>
 </div>
@@ -769,7 +769,7 @@ The version number of Traefik to install (eg. <code>2.3</code>).
 Choose the <a href="https://github.com/bitnami-labs/sealed-secrets/releases">release version for Sealed Secrets</a>
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org6d5e5d3">v0.14.1
+<pre class="src src-config" id="org08d356e">v0.14.1
 </pre>
 </div>
 </div>
@@ -844,7 +844,7 @@ Test with TLS verification on:
 </div>
 
 <p>
-TLS will not verify until you use the production <a href="#org43536dd">TRAEFIK_ACME_SERVER</a>.
+TLS will not verify until you use the production <a href="#orgc68362f">TRAEFIK_ACME_SERVER</a>.
 </p>
 </div>
 </div>
@@ -1182,7 +1182,7 @@ to direct traffic to any other node.
 <div class="outline-text-4" id="text-4-3-8">
 <p>
 <a href="https://github.com/traefik/whoami">traefik/whoami</a> can be deployed to test Traefik functionality. It listens to the
-domain <a href="#orgdd6493c">TRAEFIK_WHOAMI_DOMAIN</a> (eg. <code>whoami.k3s.example.com</code>).
+domain <a href="#org64b5240">TRAEFIK_WHOAMI_DOMAIN</a> (eg. <code>whoami.k3s.example.com</code>).
 </p>
 
 <div class="org-src-container">
@@ -1325,7 +1325,7 @@ The name of the git repository containing these org files, and from which flux
 reads. Usually it's the same as <code>CLUSTER</code>.
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org189e5ac">music.enigmacurry.com
+<pre class="src src-config" id="orge7de067">music.enigmacurry.com
 </pre>
 </div>
 </div>
@@ -1337,7 +1337,7 @@ reads. Usually it's the same as <code>CLUSTER</code>.
 The name of the owner of the git repository.
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="orgf8f482b">EnigmaCurry
+<pre class="src src-config" id="orga33e611">EnigmaCurry
 </pre>
 </div>
 </div>
@@ -1349,7 +1349,7 @@ The name of the owner of the git repository.
 The Hostname and Port number of the git repository remote URL:
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org4102213">github.com:22
+<pre class="src src-config" id="orgd9f6ccc">github.com:22
 </pre>
 </div>
 </div>
@@ -1365,7 +1365,7 @@ organization name. (This might work with other URL forms, like HTTPS, but this
 is the only one that's been tested:)
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org2c7c51e">ssh://git@github.com:22/EnigmaCurry/music.enigmacurry.com.git
+<pre class="src src-config" id="org6f60221">ssh://git@github.com:22/EnigmaCurry/music.enigmacurry.com.git
 </pre>
 </div>
 </div>
@@ -1432,7 +1432,7 @@ with its state.
 
 <p>
 If using Gitea, click the <code>+</code> icon in the upper right corner to create a <code>New
-Repository</code>. Call the new repository the same as <a href="#org189e5ac">FLUX_REPO_NAME</a>.
+Repository</code>. Call the new repository the same as <a href="#orge7de067">FLUX_REPO_NAME</a>.
 </p>
 
 <p>
@@ -1666,7 +1666,7 @@ And in another minute or so, the namespace should be gone:
 The size of root Rook volume (contains ALL other rook volumes)
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org6143158">50Gi
+<pre class="src src-config" id="org137dc1c">50Gi
 </pre>
 </div>
 </div>
@@ -1678,7 +1678,7 @@ The size of root Rook volume (contains ALL other rook volumes)
 Use the latest version from <a href="https://github.com/rook/rook/releases">https://github.com/rook/rook/releases</a>
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org0b5cf82">v1.5.6
+<pre class="src src-config" id="org24ef34e">v1.5.6
 </pre>
 </div>
 </div>
@@ -1896,7 +1896,7 @@ And check the nfs server is running:
 Funkwhale will respond on the main cluster domain:
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="orgeeff6ac">music.enigmacurry.com
+<pre class="src src-config" id="org4d2920c">music.enigmacurry.com
 </pre>
 </div>
 </div>
@@ -2114,7 +2114,7 @@ well, so I instead opted to copy them here.
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: EnigmaCurry</p>
-<p class="date">Created: 2021-02-09 Tue 16:28</p>
+<p class="date">Created: 2021-02-09 Tue 16:31</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
