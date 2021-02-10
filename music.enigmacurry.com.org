@@ -312,13 +312,14 @@ Follow the deployment instructions in the Rook library INCLUDE:
     #+end_src
 ** Funkwhale Deployment
 *** Add Helm chart repositories to Flux:
-    A [[https://gitlab.com/ananace/charts/-/tree/master/charts/funkwhale][very nice person packaged a funkwhale helm chart]]:
+    A [[https://gitlab.com/ananace/charts/-/tree/master/charts/funkwhale][very nice person packaged a funkwhale helm chart]] which I have forked and
+    added to :
     #+begin_src shell :noweb yes :eval never-export :exports code :results none
     flux create source helm bitnami \
     --url=https://charts.bitnami.com/bitnami \
     --interval=12h --export > <<SRC_DIR>>/funkwhale/helm.sources.yaml
     flux create source helm ananace \
-    --url=https://ananace.gitlab.io/charts \
+    --url=https://enigmacurry.gitlab.io/anance-charts \
     --interval=12h --export >> <<SRC_DIR>>/funkwhale/helm.sources.yaml
     #+end_src
 *** Update Helm releases

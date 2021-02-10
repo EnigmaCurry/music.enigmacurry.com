@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2021-02-09 Tue 17:47 -->
+<!-- 2021-02-10 Wed 14:16 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>music.enigmacurry.com</title>
@@ -543,7 +543,7 @@ This is the source URL for this document, used in the <a href="#Getting%20Starte
 above.
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="orga63981f">https://raw.githubusercontent.com/EnigmaCurry/literate-k3s/master/clusters/music.enigmacurry.com/music.enigmacurry.com.org
+<pre class="src src-config" id="orgc3180c7">https://raw.githubusercontent.com/EnigmaCurry/literate-k3s/master/clusters/music.enigmacurry.com/music.enigmacurry.com.org
 </pre>
 </div>
 </div>
@@ -555,7 +555,7 @@ above.
 Set <code>CLUSTER</code> to be the domain name for your cluster:
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org5fcd9dc">music.enigmacurry.com
+<pre class="src src-config" id="org3514c38">music.enigmacurry.com
 </pre>
 </div>
 </div>
@@ -568,7 +568,7 @@ Set <code>CLUSTER_SSH_USER</code> to be the admin SSH account of the cluster (us
 root).
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org86f972a">root
+<pre class="src src-config" id="orgfe4b294">root
 </pre>
 </div>
 </div>
@@ -580,7 +580,7 @@ root).
 <code>KUBE_CONFIG</code> is the local path to the kubectl config file
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="orga9785b3">${HOME}/.kube/music.enigmacurry.com-config
+<pre class="src src-config" id="orgaa732cd">${HOME}/.kube/music.enigmacurry.com-config
 </pre>
 </div>
 </div>
@@ -594,7 +594,7 @@ Since you'll need to specify the kubectl config file each and every time you use
 code blocks.
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="orgafb253e">kubectl --kubeconfig=${HOME}/.kube/music.enigmacurry.com-config
+<pre class="src src-config" id="org1c4fc49">kubectl --kubeconfig=${HOME}/.kube/music.enigmacurry.com-config
 </pre>
 </div>
 </div>
@@ -701,7 +701,7 @@ Edit the variables for the Traefik config:
 provider. 
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org5f3b842">letsencrypt@enigmacurry.com
+<pre class="src src-config" id="org03f3719">letsencrypt@enigmacurry.com
 </pre>
 </div>
 </div>
@@ -717,7 +717,7 @@ valid certificates in web browsers).
 </p>
 
 <div class="org-src-container">
-<pre class="src src-config" id="org41bc885">https://acme-staging-v02.api.letsencrypt.org/directory
+<pre class="src src-config" id="org3f3e944">https://acme-staging-v02.api.letsencrypt.org/directory
 </pre>
 </div>
 </div>
@@ -732,7 +732,7 @@ domain name to respond to. <code>TRAEFIK_WHOAMI_DOMAIN</code> is the subdomain t
 whoami service responds to.
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org6fbcbda">whoami.music.enigmacurry.com
+<pre class="src src-config" id="org93b0fdb">whoami.music.enigmacurry.com
 </pre>
 </div>
 </div>
@@ -744,7 +744,7 @@ whoami service responds to.
 The version number of Traefik to install (eg. <code>2.3</code>).
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org0ac7290">v2.3
+<pre class="src src-config" id="org1883480">v2.3
 </pre>
 </div>
 </div>
@@ -756,7 +756,7 @@ The version number of Traefik to install (eg. <code>2.3</code>).
 <code>TRAEFIK_LOG_LEVEL</code> is the filter level on the traefik log.
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org39dc322">INFO
+<pre class="src src-config" id="org30315b7">INFO
 </pre>
 </div>
 </div>
@@ -773,7 +773,7 @@ The version number of Traefik to install (eg. <code>2.3</code>).
 Choose the <a href="https://github.com/bitnami-labs/sealed-secrets/releases">release version for Sealed Secrets</a>
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="orgdb54045">v0.14.1
+<pre class="src src-config" id="org44abed4">v0.14.1
 </pre>
 </div>
 </div>
@@ -848,7 +848,7 @@ Test with TLS verification on:
 </div>
 
 <p>
-TLS will not verify until you use the production <a href="#org41bc885">TRAEFIK_ACME_SERVER</a>.
+TLS will not verify until you use the production <a href="#org3f3e944">TRAEFIK_ACME_SERVER</a>.
 </p>
 </div>
 </div>
@@ -1186,7 +1186,7 @@ to direct traffic to any other node.
 <div class="outline-text-4" id="text-4-3-8">
 <p>
 <a href="https://github.com/traefik/whoami">traefik/whoami</a> can be deployed to test Traefik functionality. It listens to the
-domain <a href="#org6fbcbda">TRAEFIK_WHOAMI_DOMAIN</a> (eg. <code>whoami.k3s.example.com</code>).
+domain <a href="#org93b0fdb">TRAEFIK_WHOAMI_DOMAIN</a> (eg. <code>whoami.k3s.example.com</code>).
 </p>
 
 <div class="org-src-container">
@@ -1329,7 +1329,7 @@ The name of the git repository containing these org files, and from which flux
 reads. Usually it's the same as <code>CLUSTER</code>.
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org8e77c4d">music.enigmacurry.com
+<pre class="src src-config" id="org1e8e859">music.enigmacurry.com
 </pre>
 </div>
 </div>
@@ -1341,7 +1341,7 @@ reads. Usually it's the same as <code>CLUSTER</code>.
 The name of the owner of the git repository.
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="orgb6cada5">EnigmaCurry
+<pre class="src src-config" id="org4142b37">EnigmaCurry
 </pre>
 </div>
 </div>
@@ -1353,7 +1353,7 @@ The name of the owner of the git repository.
 The Hostname and Port number of the git repository remote URL:
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org45dcded">github.com:22
+<pre class="src src-config" id="orge9e8907">github.com:22
 </pre>
 </div>
 </div>
@@ -1369,7 +1369,7 @@ organization name. (This might work with other URL forms, like HTTPS, but this
 is the only one that's been tested:)
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org465bf57">ssh://git@github.com:22/EnigmaCurry/music.enigmacurry.com.git
+<pre class="src src-config" id="orgcb1ee5d">ssh://git@github.com:22/EnigmaCurry/music.enigmacurry.com.git
 </pre>
 </div>
 </div>
@@ -1436,7 +1436,7 @@ with its state.
 
 <p>
 If using Gitea, click the <code>+</code> icon in the upper right corner to create a <code>New
-Repository</code>. Call the new repository the same as <a href="#org8e77c4d">FLUX_REPO_NAME</a>.
+Repository</code>. Call the new repository the same as <a href="#org1e8e859">FLUX_REPO_NAME</a>.
 </p>
 
 <p>
@@ -1670,7 +1670,7 @@ And in another minute or so, the namespace should be gone:
 The size of root Rook volume (contains ALL other rook volumes)
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="orgabfa6b1">50Gi
+<pre class="src src-config" id="org0b04e0f">50Gi
 </pre>
 </div>
 </div>
@@ -1682,7 +1682,7 @@ The size of root Rook volume (contains ALL other rook volumes)
 Use the latest version from <a href="https://github.com/rook/rook/releases">https://github.com/rook/rook/releases</a>
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="orgc3518ce">v1.5.6
+<pre class="src src-config" id="org81cbedc">v1.5.6
 </pre>
 </div>
 </div>
@@ -1900,7 +1900,7 @@ And check the nfs server is running:
 Funkwhale will respond on the main cluster domain:
 </p>
 <div class="org-src-container">
-<pre class="src src-config" id="org14148c8">music.enigmacurry.com
+<pre class="src src-config" id="org0043fc2">music.enigmacurry.com
 </pre>
 </div>
 </div>
@@ -1918,7 +1918,7 @@ Funkwhale will respond on the main cluster domain:
 <h4 id="FUNKWHALE_POSTGRESQL_HELM_CHART_VERSION"><span class="section-number-4">7.1.3</span> FUNKWHALE_POSTGRESQL_HELM_CHART_VERSION</h4>
 <div class="outline-text-4" id="text-7-1-3">
 <div class="org-src-container">
-<pre class="src src-config" id="org47d8efb">10.1.1
+<pre class="src src-config" id="org6f58e2d">10.1.1
 </pre>
 </div>
 </div>
@@ -1927,7 +1927,7 @@ Funkwhale will respond on the main cluster domain:
 <h4 id="FUNKWHALE_POSTGRESQL_PVC_SIZE"><span class="section-number-4">7.1.4</span> FUNKWHALE_POSTGRESQL_PVC_SIZE</h4>
 <div class="outline-text-4" id="text-7-1-4">
 <div class="org-src-container">
-<pre class="src src-config" id="org6ad1500">8Gi
+<pre class="src src-config" id="orgc055c1b">8Gi
 </pre>
 </div>
 </div>
@@ -1941,14 +1941,15 @@ Funkwhale will respond on the main cluster domain:
 <h4 id="Add%20Helm%20chart%20repositories%20to%20Flux%3A"><span class="section-number-4">7.2.1</span> Add Helm chart repositories to Flux:</h4>
 <div class="outline-text-4" id="text-7-2-1">
 <p>
-A <a href="https://gitlab.com/ananace/charts/-/tree/master/charts/funkwhale">very nice person packaged a funkwhale helm chart</a>:
+A <a href="https://gitlab.com/ananace/charts/-/tree/master/charts/funkwhale">very nice person packaged a funkwhale helm chart</a> which I have forked and
+added to :
 </p>
 <div class="org-src-container">
 <pre class="src src-shell">flux create source helm bitnami <span style="color: #2d9574;">\</span>
 --url=https://charts.bitnami.com/bitnami <span style="color: #2d9574;">\</span>
 --interval=<span style="color: #a45bad;">12h</span> --export &gt; ~/git/clusters/music.enigmacurry.com/funkwhale/helm.sources.yaml
 flux create source helm ananace <span style="color: #2d9574;">\</span>
---url=https://ananace.gitlab.io/charts <span style="color: #2d9574;">\</span>
+--url=https://enigmacurry.gitlab.io/anance-charts <span style="color: #2d9574;">\</span>
 --interval=<span style="color: #a45bad;">12h</span> --export &gt;&gt; ~/git/clusters/music.enigmacurry.com/funkwhale/helm.sources.yaml
 </pre>
 </div>
@@ -2188,7 +2189,7 @@ well, so I instead opted to copy them here.
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: EnigmaCurry</p>
-<p class="date">Created: 2021-02-09 Tue 17:47</p>
+<p class="date">Created: 2021-02-10 Wed 14:16</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
