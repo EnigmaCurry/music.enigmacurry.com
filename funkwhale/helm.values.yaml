@@ -4,8 +4,4 @@ persistence:
   size: 25Gi
   storageClass: rook-nfs-share1
 ingress:
-  enabled: true
-  host: music.enigmacurry.com
-  annotations:
-    kubernetes.io/ingress.class: traefik
-    traefik.ingress.kubernetes.io/router.tls.certresolver: default
+  enabled: false
