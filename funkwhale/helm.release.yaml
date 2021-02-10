@@ -20,11 +20,7 @@ spec:
         kubernetes.io/ingress.class: traefik
         traefik.ingress.kubernetes.io/router.tls.certresolver: default
       enabled: true
-      hosts:
-      - host: music.enigmacurry.com
-        path: /
-        serviceName: funkwhale
-        servicePort: 80
+      host: music.enigmacurry.com
     persistence:
       enabled: true
       size: 25Gi
