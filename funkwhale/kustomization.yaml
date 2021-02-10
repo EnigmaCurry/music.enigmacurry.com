@@ -4,3 +4,4 @@ resources:
 - namespace.yaml
 - helm.sources.yaml
 - helm.release.yaml
+- ingress.yaml

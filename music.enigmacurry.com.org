@@ -384,6 +384,7 @@ Follow the deployment instructions in the Rook library INCLUDE:
   - namespace.yaml
   - helm.sources.yaml
   - helm.release.yaml
+  - ingress.yaml
   #+end_src
 *** funkwhale/namespace.yaml
   #+begin_src yaml :noweb yes :eval no :tangle funkwhale/namespace.yaml
@@ -403,6 +404,40 @@ Follow the deployment instructions in the Rook library INCLUDE:
     ingress:
       enabled: false
     #+end_src
+*** funkwhale/ingress.yaml
+#+begin_src yaml :noweb yes :eval no :tangle funkwhale/ingress.yaml
+apiVersion: traefik.containo.us/v1alpha1
+kind: TraefikService
+metadata:
+  name: funkwhale
+  namespace: funkwhale
+spec:
+  weighted:
+    services:
+      - name: funkwhale-funkwhale
+        weight: 1
+        port: 80
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: funkwhale
+  namespace: funkwhale
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+spec:
+  entryPoints:
+  - websecure
+  routes:
+  - kind: Rule
+    match: Host(`<<FUNKWHALE_DOMAIN>>`)
+    services:
+    - name: funkwhale
+      port: 80
+  tls:
+    certResolver: default  
+#+end_src
 * LICENSE
 #+INCLUDE: "~/git/vendor/enigmacurry/literate-k3s/LICENSE.org"
 * COMMENT Emacs Local Variables

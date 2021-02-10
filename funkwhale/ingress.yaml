@@ -1,0 +1,31 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: TraefikService
+metadata:
+  name: funkwhale
+  namespace: funkwhale
+spec:
+  weighted:
+    services:
+      - name: funkwhale-funkwhale
+        weight: 1
+        port: 80
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: funkwhale
+  namespace: funkwhale
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+spec:
+  entryPoints:
+  - websecure
+  routes:
+  - kind: Rule
+    match: Host(`music.enigmacurry.com`)
+    services:
+    - name: funkwhale
+      port: 80
+  tls:
+    certResolver: default
