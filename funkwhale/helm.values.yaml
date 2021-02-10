@@ -5,11 +5,7 @@ persistence:
   storageClass: rook-nfs-share1
 ingress:
   enabled: true
-  hosts:
-  - host: music.enigmacurry.com
-    serviceName: funkwhale
-    servicePort: 80
-    path: /
+  host: music.enigmacurry.com
   annotations:
     kubernetes.io/ingress.class: traefik
     traefik.ingress.kubernetes.io/router.tls.certresolver: default

@@ -372,11 +372,7 @@ Follow the deployment instructions in the Rook library INCLUDE:
       storageClass: rook-nfs-share1
     ingress:
       enabled: true
-      hosts:
-      - host: <<FUNKWHALE_DOMAIN>>
-        serviceName: funkwhale
-        servicePort: 80
-        path: /
+      host: <<FUNKWHALE_DOMAIN>>
       annotations:
         kubernetes.io/ingress.class: traefik
         traefik.ingress.kubernetes.io/router.tls.certresolver: default
