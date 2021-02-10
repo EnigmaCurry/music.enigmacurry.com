@@ -2,7 +2,7 @@ djangoSecret: insecure-secret
 persistence:
   enabled: true
   size: 25Gi
-  storageClass:
+  storageClass: rook-nfs-share1
 ingress:
   enabled: true
   hosts:

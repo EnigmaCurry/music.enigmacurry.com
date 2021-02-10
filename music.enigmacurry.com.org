@@ -403,7 +403,7 @@ Follow the deployment instructions in the Rook library INCLUDE:
     persistence:
       enabled: true
       size: 25Gi
-      storageClass:
+      storageClass: rook-nfs-share1
     ingress:
       enabled: true
       hosts:
