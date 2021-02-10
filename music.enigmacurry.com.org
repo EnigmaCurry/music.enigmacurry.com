@@ -97,7 +97,7 @@ root
   =KUBE_CONFIG= is the local path to the kubectl config file
   #+name: KUBE_CONFIG
   #+begin_src config :noweb yes :eval no
-  ~/.kube/<<CLUSTER>>-config
+  ${HOME}/.kube/<<CLUSTER>>-config
   #+end_src
 ** kubectl command
  Since you'll need to specify the kubectl config file each and every time you use
@@ -375,10 +375,6 @@ Follow the deployment instructions in the Rook library INCLUDE:
     #+begin_src shell :noweb yes :eval never-export :exports code
     <<kubectl>> -n funkwhale get pvc
     #+end_src
-
-    #+RESULTS:
-    | NAME                | STATUS  | VOLUME     | CAPACITY | ACCESS | MODES | STORAGECLASS | AGE |
-    | funkwhale-funkwhale | Pending | local-path | 25m      |        |       |              |     |
 
 *** funkwhale/kustomization.yaml
   #+begin_src yaml :noweb yes :eval no :tangle funkwhale/kustomization.yaml
