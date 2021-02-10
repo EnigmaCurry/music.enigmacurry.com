@@ -7,7 +7,7 @@
 * Getting Started
 This is a [[https://github.com/EnigmaCurry/literate-k3s][literate-k3s]] Emacs Org-Babel document, (or its exported HTML form on
 the web.) Please read the upstream [[https://enigmacurry.github.io/literate-k3s/#Introduction][literate-k3s Introduction]] if you are new to
-this.
+this. 
 
 This guide will install [[https://funkwhale.audio/][funkwhale]], a self-hosted (federated) audio hosting
 platform and web player, on a new (single node) [[https://k3s.io][K3s]] cluster that you will
@@ -18,7 +18,7 @@ repository to your workstation:
 
 #+begin_src shell :noweb yes :eval never-export :exports code
 git clone https://github.com/EnigmaCurry/literate-k3s.git \
-    ${HOME}/git/vendor/enigmacurry/literate-k3s
+    ~/git/vendor/enigmacurry/literate-k3s
 #+end_src
 
 Your second step is to create another new directory tree on your workstation, to
@@ -97,7 +97,7 @@ root
   =KUBE_CONFIG= is the local path to the kubectl config file
   #+name: KUBE_CONFIG
   #+begin_src config :noweb yes :eval no
-  ${HOME}/.kube/<<CLUSTER>>-config
+  ~/.kube/<<CLUSTER>>-config
   #+end_src
 ** kubectl command
  Since you'll need to specify the kubectl config file each and every time you use
@@ -134,7 +134,7 @@ Install [[https://github.com/alexellis/k3sup#readme][k3sup]], then create the cl
 
 #+begin_src shell :noweb yes :eval never-export :exports code :results none
 set -e
-mkdir -p ${HOME}/.kube
+mkdir -p ~/.kube
 k3sup install --host <<CLUSTER>> --user <<CLUSTER_SSH_USER>> \
   --local-path <<KUBE_CONFIG>> --k3s-extra-args '--disable traefik'
 #+end_src
