@@ -287,7 +287,7 @@ Follow the deployment instructions in the Flux library INCLUDE:
 #+BEGIN_COMMENT
 Follow the deployment instructions in the Rook library INCLUDE:
 #+END_COMMENT
-#+INCLUDE: "~/git/vendor/enigmacurry/literate-k3s/lib/rook.org"
+#+INCLUDE: "~/git/vendor/enigmacurry/literate-k3s/lib/rook-nfs.org"
 * Funkwhale
 ** Funkwhale Config
 *** FUNKWHALE_DOMAIN
@@ -403,6 +403,7 @@ Follow the deployment instructions in the Rook library INCLUDE:
     persistence:
       enabled: true
       size: 25Gi
+      storageClass:
     ingress:
       enabled: true
       hosts:

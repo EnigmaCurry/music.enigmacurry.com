@@ -2,6 +2,7 @@ djangoSecret: insecure-secret
 persistence:
   enabled: true
   size: 25Gi
+  storageClass:
 ingress:
   enabled: true
   hosts:
