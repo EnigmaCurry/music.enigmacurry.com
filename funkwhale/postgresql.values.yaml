@@ -1,0 +1,4 @@
+postgresqlUsername: funkwhale
+postgresqlDatabase: funkwhale
+persistence:
+  size: 8Gi
